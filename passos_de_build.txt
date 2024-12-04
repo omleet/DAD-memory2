@@ -1,0 +1,27 @@
+Meter o ficheiro .env no laravel/vue.
+
+
+-----------------------------------------------------------------------------------------------
+Laravel:      
+
+composer require laravel/sail --dev
+php artisan sail:install                                                                                                                                                                                                                                                                                                                     php artisan key:generate                                                                                                                                                                                                                                                                                          cd app_name
+./vendor/bin/sail artisan migrate:fresh
+./vendor/bin/sail artisan db:seed
+
+
+Base de Dados:
+php artisan key:generate
+./vendor/bin/sail artisan config:clear
+./vendor/bin/sail artisan config:cache
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+
+Vue
+npm install
+npm run dev
+
+Sockets
+npm install socket.io
+node index.js
+
