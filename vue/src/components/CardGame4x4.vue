@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <CardGame v-if="authStore.user" :gridSize="16" />
 
     

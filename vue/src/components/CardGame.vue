@@ -1,5 +1,12 @@
 <template>
-  <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-xl max-w-full mx-auto my-6">
+  <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-xl max-w-full mx-auto my-6 relative">
+    <!-- Botão com a seta para voltar -->
+    <button @click="router.back"
+      class="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="w-5 h-5 fill-current">
+        <path d="M32 15H3.41l8.29-8.29-1.41-1.42-10 10a1 1 0 0 0 0 1.41l10 10 1.41-1.41L3.41 17H32z" />
+      </svg>
+    </button>
     <h1 class="text-3xl sm:text-4xl text-gray-800 mb-6">Card Matching Game</h1>
 
     <div class="flex items-center justify-center gap-6 mb-8 text-sm sm:text-lg">
@@ -64,6 +71,8 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import Card from './Card.vue';
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const inactivityTimer = ref(0); // Tempo atual de inatividade
 const maxInactivityTime = 21; // Tempo total para encerrar o jogo
