@@ -208,6 +208,42 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const canUserDeleteOwnAccount = () => {
+    return user.value && userType.value === 'P'
+  }
+
+  const isAdministrator = () => {
+    return user.value && userType.value === 'A'
+  }
+
+  const validatePassword = async (password) => {
+    storeError.resetMessages()
+    try {
+      const response = await axios.post('auth/validatepassword', { password })
+      return response.data
+    } catch (e) {
+      storeError.setErrorMessages(e.response.data.message, e.response.data.errors, e.response.status, 'The current password is incorrect')
+      return false
+    }
+  }
+
+  const accountRemoval = async () => {
+    storeError.resetMessages()
+    try {
+      await axios.delete(`users/${user.value.id}`)
+      toast(
+        {
+          description: 'Account has been deleted successfully!',
+        })
+      clearUser()
+      return true
+    } catch (e) {
+      clearUser()
+      storeError.setErrorMessages(e.response.data.message, [], e.response.status, 'Error in Authentication!')
+      return false
+    }
+  }
+
 
   return {
     user,
@@ -222,6 +258,10 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     restoreToken,
-    ProfileUpdate
+    ProfileUpdate,
+    canUserDeleteOwnAccount,
+    isAdministrator,
+    validatePassword,
+    accountRemoval
   }
 })

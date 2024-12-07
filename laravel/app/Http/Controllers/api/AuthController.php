@@ -40,23 +40,23 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request)
-{
-    // Purga os tokens expirados
-    $this->purgeExpiredTokens();
-    
-    // Revogar o token atual
-    $this->revokeCurrentToken($request->user());
-    
-    // Excluindo o token manualmente da tabela de tokens
-    $user = $request->user();
-    $user->tokens->each(function ($token) use ($user) {
-        if ($token->id === $user->currentAccessToken()->id) {
-            $token->delete();  // Deleta o token do usuário
-        }
-    });
+    {
+        // Purga os tokens expirados
+        $this->purgeExpiredTokens();
 
-    return response()->json(null, 204);
-}
+        // Revogar o token atual
+        $this->revokeCurrentToken($request->user());
+
+        // Excluindo o token manualmente da tabela de tokens
+        $user = $request->user();
+        $user->tokens->each(function ($token) use ($user) {
+            if ($token->id === $user->currentAccessToken()->id) {
+                $token->delete();  // Deleta o token do usuário
+            }
+        });
+
+        return response()->json(null, 204);
+    }
 
     public function refreshToken(Request $request)
     {
@@ -67,7 +67,11 @@ class AuthController extends Controller
         return response()->json(['token' => $token]);
     }
 
-
-   
-
+    public function validatepassword(Request $request)
+    {
+        if (!Hash::check($request->password, $request->user()->password)) {
+            return response()->json(['message' => 'Current Password is incorrect!'], 400);
+        }
+        return response()->json(['message' => 'The Password is valid!'], 200);
+    }
 }

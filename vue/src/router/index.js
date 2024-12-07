@@ -16,7 +16,7 @@ import PublicLeaderboardsByTime from '@/components/PublicLeaderboardsByTime.vue'
 import PublicLeaderboardsByMoves from '@/components/PublicLeaderboardsByMoves.vue'
 import PublicLeaderboardMultiplayer from '@/components/PublicLeaderboardMultiplayer.vue'
 import ProfileEdit from '@/components/ProfileEdit.vue'
-
+import AccountDelete from '@/components/AccountDelete.vue'
 
 
 const router = createRouter({
@@ -103,9 +103,14 @@ const router = createRouter({
       name: 'profileedit',
       component: ProfileEdit,
     },
+    {
+      path: '/accountdelete',
+      name: 'accountdelete',
+      component: AccountDelete,
+    },
 
     
-
+    
   ]
 })
 

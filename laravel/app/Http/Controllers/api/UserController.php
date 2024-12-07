@@ -49,47 +49,45 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        ///Usando base64
-        // if ($request->photo_filename) {
-        //     if (Storage::disk('public')->exists('photos/' . $user_old_photo)) {
-        //         Storage::disk('public')->delete('photos/' . $user_old_photo);
-        //     }
+        //Usando base64
+         if ($request->photo_filename) {
+             if (Storage::disk('public')->exists('photos/' . $user_old_photo)) {
+                 Storage::disk('public')->delete('photos/' . $user_old_photo);
+             }
 
-        //     $image = $request->photo_filename;
-        //     $image = str_replace('data:image/png;base64,', '', $image);
-        //     $image = str_replace('data:image/jpeg;base64,', '', $image);
-        //     $image = str_replace(' ', '+', $image);
-        //     $imageData = base64_decode($image);
+             $image = $request->photo_filename;
+             $image = str_replace('data:image/png;base64,', '', $image);
+             $image = str_replace('data:image/jpeg;base64,', '', $image);
+             $image = str_replace(' ', '+', $image);
+             $imageData = base64_decode($image);
 
 
-        //     $extension = 'png';
-        //     if (strpos($request->photo_filename, 'data:image/jpeg;base64,') === 0) {
-        //         $extension = 'jpg';
-        //     }
-        //     $filename = $user->id . '_' . uniqid() . '.' . $extension;
-        //     Storage::disk('public')->put('photos/' . $filename, $imageData);
-        //     $user->photo_filename = $filename;
-        // }
+             $extension = 'png';
+             if (strpos($request->photo_filename, 'data:image/jpeg;base64,') === 0) {
+                 $extension = 'jpg';
+             }
+             $filename = $user->id . '_' . uniqid() . '.' . $extension;
+             Storage::disk('public')->put('photos/' . $filename, $imageData);
+             $user->photo_filename = $filename;
+         }
 
-        if ($request->hasFile('photo_filename')) {
-            // Verifica se a foto antiga existe e deleta
-            if (Storage::disk('public')->exists('photos/' . $user_old_photo)) {
-                Storage::disk('public')->delete('photos/' . $user_old_photo);
-            }
-
-            // Recupera o arquivo de imagem
-            $image = $request->file('photo_filename');
-            $filename = $user->id . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Armazena o arquivo de imagem
-            $image->storeAs('photos', $filename, 'public');
-            $user->photo_filename = $filename;
-        }
+    
 
         $user->save();
         $user->updated_at = now();
 
         return new UserResource($user);
+    }
+
+    public function delete(User $user){
+
+        $user->delete();
+        $user->brain_coins_balance = 0;
+        $user->save();
+
+        return response()->json([
+            'message' => 'ID: '. $user->id .', Name: '. $user->name . ' deleted!'
+        ]);
     }
 
     

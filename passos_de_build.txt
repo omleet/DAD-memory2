@@ -8,6 +8,7 @@ composer require laravel/sail --dev
 php artisan sail:install                                                                                                                                                                                                                                                                                                                     php artisan key:generate                                                                                                                                                                                                                                                                                          cd app_name
 ./vendor/bin/sail artisan migrate:fresh
 ./vendor/bin/sail artisan db:seed
+composer update
 
 
 Base de Dados:
