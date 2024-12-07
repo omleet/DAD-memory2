@@ -1,150 +1,213 @@
-import { ref, computed, onBeforeMount } from 'vue'; // Importa as funções do Vue
-import { defineStore } from 'pinia';
-import axios from 'axios';
-import { useErrorStore } from '@/stores/error';
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
+import axios from 'axios'
+import { useErrorStore } from '@/stores/error'
+import avatarNoneAssetURL from '@/assets/avatar-none.png'
+import { useRouter } from 'vue-router'
+import { useToast } from '@/components/ui/toast/use-toast'
 
-import avatarNoneAssetURL from '@/assets/avatar-none.png';
+
 
 export const useAuthStore = defineStore('auth', () => {
-  const storeError = useErrorStore();
+
+  const storeError = useErrorStore()
+  const router = useRouter()
+  const { toast } = useToast()
 
   // Estado
-  const user = ref(null);
-  const token = ref(localStorage.getItem('authToken') || '');
+  const user = ref(null)
+  const token = ref('')
 
   // Computed Properties
-  const isAuthenticated = computed(() => !!user.value);
-  const userName = computed(() => user.value ? user.value.name : '');
+  const userName = computed(() => {
+    return user.value ? user.value.name : ''
+  })
+
   const userFirstLastName = computed(() => {
-    const names = userName.value.trim().split(' ');
-    const firstName = names[0] ?? '';
-    const lastName = names.length > 1 ? names[names.length - 1] : '';
-    return (firstName + ' ' + lastName).trim();
-  });
-  const userEmail = computed(() => user.value ? user.value.email : '');
-  const userType = computed(() => user.value ? user.value.type : '');
+    const names = userName.value.trim().split(' ')
+    const firstName = names[0] ?? ''
+    const lastName = names.length > 1 ? names[names.length - 1] : ''
+    return (firstName + ' ' + lastName).trim()
+  })
 
-  const photo_filename = computed(() => {
-    console.log('User Photo URL:', photo_filename);
+  const userEmail = computed(() => {
+    return user.value ? user.value.email : ''
+  })
 
-    // Garante que o valor de 'user.photo_url' está disponível
-    return user.value && user.value.photo_filename
-        ? user.value.photo_filename
-        : avatarNoneAssetURL; // Avatar padrão
+  const nickname = computed(() => {
+    return user.value ? user.value.nickname : ''
+  })
 
-});
+  const userType = computed(() => {
+    return user.value ? user.value.type : ''
+  })
 
-  // Funções
+  const userPhotoUrl = computed(() => {
+    const photoFile = user.value ? user.value.photo_filename ?? '' : ''
+    if (photoFile) {
+      return axios.defaults.baseURL.replaceAll("/api", photoFile)
+    }
+    return avatarNoneAssetURL
+  })
+
+  const balance = computed(() => {
+    return user.value ? user.value.brain_coins_balance : 0
+  })
+
+  const gamesWon = computed(() => {
+    return user.value ? user.value.games_won : 0
+  })
+
+  // Funções Privadas
   const clearUser = () => {
-    resetIntervalToRefreshToken();
-    user.value = null;
-    token.value = '';
-    localStorage.removeItem('authToken');
-    axios.defaults.headers.common.Authorization = '';
-  };
+    resetIntervalToRefreshToken()
+    user.value = null
+    token.value = ''
+    localStorage.removeItem('token')
+    axios.defaults.headers.common.Authorization = ''
+    //router.push('/profile') // Redireciona para a página de login
+  }
 
-  const login = async (credentials) => {
-    storeError.resetMessages();
-    try {
-      const responseLogin = await axios.post('auth/login', credentials);
-      token.value = responseLogin.data.token;
-      localStorage.setItem('authToken', token.value);
-      axios.defaults.headers.common.Authorization = 'Bearer ' + token.value;
-      const responseUser = await axios.get('users/me');
-      user.value = { ...responseUser.data, brain_coins_balance: responseUser.data.brain_coins_balance ?? 0 };
-      repeatRefreshToken();
-      return user.value;
-    } catch (e) {
-      clearUser();
-      storeError.setErrorMessages(
-        e.response?.data?.message,
-        e.response?.data?.errors,
-        e.response?.status,
-        'Authentication Error!'
-      );
-      return false;
-    }
-  };
-
-  const logout = async () => {
-    storeError.resetMessages();
-    let success = false;
-    try {
-      await axios.post('auth/logout');
-      success = true;
-      clearUser();
-    } finally {
-      clearUser();
-    }
-    return success;
-  };
-
-  let intervalToRefreshToken = null;
+  let intervalToRefreshToken = null
 
   const resetIntervalToRefreshToken = () => {
     if (intervalToRefreshToken) {
-      clearInterval(intervalToRefreshToken);
+      clearInterval(intervalToRefreshToken)
     }
-    intervalToRefreshToken = null;
-  };
+    intervalToRefreshToken = null
+  }
 
   const repeatRefreshToken = () => {
     if (intervalToRefreshToken) {
-      clearInterval(intervalToRefreshToken);
+      clearInterval(intervalToRefreshToken)
     }
-    intervalToRefreshToken = setInterval(
-      async () => {
-        try {
-          const response = await axios.post('auth/refreshtoken');
-          token.value = response.data.token;
-          localStorage.setItem('authToken', token.value);
-          axios.defaults.headers.common.Authorization = 'Bearer ' + token.value;
-          return true;
-        } catch (e) {
-          clearUser();
-          storeError.setErrorMessages(
-            e.response?.data?.message,
-            e.response?.data?.errors,
-            e.response?.status,
-            'Authentication Error!'
-          );
-          return false;
-        }
-      },
-      1000 * 60 * 110
-    );
-    return intervalToRefreshToken;
-  };
-
-  // Função para inicializar o estado de autenticação quando a página é recarregada (F5)
-const initializeAuth = async () => {
-  const savedToken = localStorage.getItem('authToken');
-  if (savedToken) {
-    token.value = savedToken;
-    axios.defaults.headers.common.Authorization = `Bearer ${savedToken}`;
-
-    try {
-      const responseUser = await axios.get('users/me');
-      user.value = { 
-        ...responseUser.data, 
-        brain_coins_balance: responseUser.data.brain_coins_balance ?? 0 
-      };
-      repeatRefreshToken();
-    } catch (e) {
-      clearUser();
-      console.error('Erro ao carregar o usuário após F5:', e);
-    }
-  } else {
-    clearUser();
+    intervalToRefreshToken = setInterval(async () => {
+      try {
+        const response = await axios.post('auth/refreshtoken')
+        token.value = response.data.token
+        localStorage.setItem('token', token.value)
+        axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
+        return true
+      } catch (e) {
+        clearUser()
+        storeError.setErrorMessages(e.response.data.message, e.response.data.errors, e.response.status, 'Authentication Error!')
+        return false
+      }
+    }, 1000 * 60 * 110)  // repeat every 110 minutes
+    return intervalToRefreshToken
   }
-};
 
-  
+  const restoreToken = async function () {
+    let storedToken = localStorage.getItem('token')
+    if (storedToken) {
+      try {
+        token.value = storedToken
+        axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
+        const responseUser = await axios.get('users/me')
+        user.value = responseUser.data.data
+        repeatRefreshToken()
+        return true
+      } catch {
+        clearUser()
+        return false
+      }
+    }
+    return false
+  }
 
-  // Chamando initializeAuth ao carregar o store (no onBeforeMount)
-  onBeforeMount(() => {
-    initializeAuth();
-  });
+  // Funções Públicas
+  const login = async (credentials) => {
+    storeError.resetMessages()
+    try {
+      const responseLogin = await axios.post('auth/login', credentials)
+      token.value = responseLogin.data.token
+      localStorage.setItem('token', token.value)
+      axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
+      const responseUser = await axios.get('users/me')
+      user.value = responseUser.data.data
+      repeatRefreshToken()
+      router.push('/profile')
+      return user.value
+    } catch (e) {
+      clearUser()
+      storeError.setErrorMessages(e.response.data.message, e.response.data.errors, e.response.status, 'Authentication Error!')
+      return false
+    }
+  }
+
+  const logout = async () => {
+    storeError.resetMessages()
+    try {
+      await axios.post('auth/logout')
+      router.push('/')
+      clearUser()
+      return true
+    } catch (e) {
+      clearUser()
+      storeError.setErrorMessages(e.response.data.message, [], e.response.status, 'Authentication Error!')
+      return false
+    }
+  }
+
+  const ProfileUpdate = async (credentials) => {
+    const payload = {}
+
+    if (credentials.email) {
+      payload.email = credentials.email
+    }
+    if (credentials.name) {
+      payload.name = credentials.name
+    }
+    if (credentials.nickname) {
+      payload.nickname = credentials.nickname
+    }
+    if (credentials.photo_filename) {
+      payload.photo_filename = credentials.photo_filename
+    }
+
+    console.log(payload);
+    try {
+      const response = await axios.put(`/users/${user.value.id}`, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      console.log(response.data);
+      await getDataAfterTheUpdate();
+
+      router.push('/profile');
+
+      toast({
+        description: 'Account info has been updated successfully!',
+      })
+
+
+      return response.data
+    } catch (e) {
+      console.log(e);
+      if (e.response) {
+        storeError.setErrorMessages(e.response.data.message, e.response.data.errors, e.response.status, 'Profile Update Error!')
+      } else {
+        storeError.setErrorMessages('An unexpected error occurred.')
+      }
+      return false
+    }
+  }
+
+  const getDataAfterTheUpdate = async () => {
+    try {
+      const response = await axios.get('users/me')
+      user.value = response.data.data
+      return user.value
+    } catch (e) {
+      clearUser()
+      storeError.setErrorMessages(e.response.data.message, e.response.data.errors, e.response.status, 'Authentication Error!')
+      return false
+
+    }
+  }
+
 
   return {
     user,
@@ -152,10 +215,13 @@ const initializeAuth = async () => {
     userFirstLastName,
     userEmail,
     userType,
-    photo_filename,
-    isAuthenticated,
+    userPhotoUrl,
+    nickname,
+    balance,
+    gamesWon,
     login,
     logout,
-    initializeAuth  // Garanta que o initializeAuth seja retornado
-  };
-});
+    restoreToken,
+    ProfileUpdate
+  }
+})

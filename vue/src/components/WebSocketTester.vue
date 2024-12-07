@@ -4,7 +4,7 @@ import Button from './ui/button/Button.vue';
 
 const socket = inject('socket')
 
-const message = ref('DAD Intermediate Submission')
+const message = ref('WebSocket connection is working!')
 const responseData = ref('')
 
 const send = () => {

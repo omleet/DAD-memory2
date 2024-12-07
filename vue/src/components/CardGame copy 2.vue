@@ -43,73 +43,12 @@
         </button>
       </div>
     </div>
-
-    <div v-if="isInactivityPopupVisible"
-      class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-      <div class="bg-white rounded-xl p-6 text-center shadow-xl max-w-lg w-full">
-        <h2 class="text-3xl sm:text-4xl text-red-500 mb-4">⚠️ Attention!</h2>
-        <p class="text-lg text-gray-600 mb-5">
-          The game will end in {{ maxInactivityTime - inactivityTimer }} seconds!
-        </p>
-        <button @click="resetInactivityTimer"
-          class="bg-blue-500 text-white text-lg py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors">
-          Continue Playing...
-        </button>
-      </div>
-    </div>
-
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import Card from './Card.vue';
-
-const inactivityTimer = ref(0); // Tempo atual de inatividade
-const maxInactivityTime = 21; // Tempo total para encerrar o jogo
-const inactivityWarningTime = 10; // Tempo para mostrar o aviso
-const isInactivityPopupVisible = ref(false); // Controle de visibilidade do aviso
-let inactivityInterval = null; // Intervalo para monitorar a inatividade
-
-const startInactivityTimer = () => {
-  inactivityInterval = setInterval(() => {
-    inactivityTimer.value += 1;
-
-    // Mostrar o aviso após 10 segundos
-    if (inactivityTimer.value >= inactivityWarningTime && !isInactivityPopupVisible.value) {
-      isInactivityPopupVisible.value = true; // Mostra o popup
-    }
-
-    // Finalizar o jogo após 22 segundos
-    if (inactivityTimer.value >= maxInactivityTime) {
-      endGame(); // Finaliza o jogo
-    }
-  }, 1000);
-};
-
-const resetInactivityTimer = () => {
-  inactivityTimer.value = 0; // Reseta o contador de inatividade
-  isInactivityPopupVisible.value = false; // Esconde o popup se estiver visível
-};
-
-const stopInactivityTimer = () => {
-  clearInterval(inactivityInterval); // Para o intervalo de inatividade
-};
-
-
-const endGame = () => {
-  stopInactivityTimer(); // Para o timer de inatividade
-  stopTimer(); // Para o cronômetro do jogo
-
-  cards.forEach(card => {
-    card.isFlipped = false;
-    card.isMatched = false;
-  });
-
-  alert("The game ended for inactivity!");
-  resetGame(); // Reinicia o jogo
-};
-
 
 
 const props = defineProps({
@@ -192,14 +131,12 @@ const shuffleCards = () => {
 };
 
 onMounted(() => {
-  startInactivityTimer(); 
   cards.splice(0, cards.length, ...generateCards(props.gridSize)); // Gera as cartas
   shuffleCards(); // Embaralha as cartas após a geração
 });
 
 
 const handleCardFlip = index => {
-  resetInactivityTimer();
   const card = cards[index];
   if (card.isFlipped || card.isMatched || flippedCards.length === 2) return; // Não vira cartas se já estiverem viradas ou se já houver 2 cartas viradas
 
@@ -238,7 +175,6 @@ const handleCardFlip = index => {
 };
 
 const resetGame = () => {
-  resetInactivityTimer();
   cards.forEach(card => {
     card.isFlipped = false;
     card.isMatched = false;
@@ -269,12 +205,7 @@ const stopTimer = () => {
 
 onUnmounted(() => {
   clearInterval(timerInterval);
-  stopInactivityTimer();
 });
-
-
-
-
 </script>
 
 
@@ -285,3 +216,4 @@ onUnmounted(() => {
   align-items: center;
 }
 </style>
+

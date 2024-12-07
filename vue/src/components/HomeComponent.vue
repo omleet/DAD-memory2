@@ -64,7 +64,7 @@
       </div>
   
       <!-- Componente de alerta -->
-      <AlertMessage v-if="alertVisible" message="Alert! Please log in / Register to proceed." />
+      <AlertMessage v-if="alertVisible" message="Alert! Please Log in/Register to proceed." />
     </div>
   </template>
   
@@ -74,7 +74,7 @@
   import AlertMessage from '@/components/ui/alerts/AlertMessage.vue'
   
   const authStore = useAuthStore()
-  const isAuthenticated = authStore.isAuthenticated
+  const isAuthenticated = authStore.user
   const alertVisible = ref(false)
   
   // Função para mostrar o alerta

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import HomeComponent from '@/components/HomeComponent.vue'
 import WebSocketTester from '@/components/WebSocketTester.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
@@ -9,12 +10,12 @@ import MultiplayerGame from '@/components/MultiplayerGame.vue'
 import CardGame from '@/components/CardGame.vue'
 import CardGame4x4 from '@/components/CardGame4x4.vue'
 import CardGame6x6 from '@/components/CardGame6x6.vue'
-import LaravelTester from '@/components/LaravelTester.vue'
 import Profile from '@/components/Profile.vue'
 import LeaderboardsAll from '@/components/LeaderboardsAll.vue'
 import PublicLeaderboardsByTime from '@/components/PublicLeaderboardsByTime.vue'
 import PublicLeaderboardsByMoves from '@/components/PublicLeaderboardsByMoves.vue'
 import PublicLeaderboardMultiplayer from '@/components/PublicLeaderboardMultiplayer.vue'
+import ProfileEdit from '@/components/ProfileEdit.vue'
 
 
 
@@ -72,11 +73,6 @@ const router = createRouter({
       component: CardGame6x6
     },
     {
-      path: '/laraveltester',
-      name: 'laraveltester',
-      component: LaravelTester
-    },
-    {
       path: '/profile',
       name: 'profile',
       component: Profile,
@@ -102,9 +98,32 @@ const router = createRouter({
       name: 'publicleaderboardsmultiplayer',
       component: PublicLeaderboardMultiplayer,
     },
+    {
+      path: '/profileedit',
+      name: 'profileedit',
+      component: ProfileEdit,
+    },
 
     
+
   ]
 })
+
+let handlingFirstRoute = true
+
+router.beforeEach(async (to, from, next) => {
+  const storeAuth = useAuthStore()
+  if (handlingFirstRoute) {
+      handlingFirstRoute = false
+      await storeAuth.restoreToken()
+  }
+
+  if (to.name == "profile" && (!storeAuth.user)) {
+    next({ name: 'loginform' })
+    return
+  }
+  next()
+})
+
 
 export default router

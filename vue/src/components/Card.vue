@@ -1,13 +1,15 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="card w-30 h-45 cursor-pointer relative" 
+  <div class="card w-30 h-45 cursor-pointer relative " 
        :class="{ 'flipped': isFlipped, 'matched': card.isMatched, 'shuffling': card.isShuffling }"
        @click="$emit('flip')">
-    <div class="card-inner w-full h-full transition-transform duration-300 ease-in-out transform-style-preserve-3d">
-      <div class="card-front w-full h-full absolute top-0 left-0 rounded-lg shadow-lg bg-cover bg-center"
-           style="background-image: url('/carta.png');">
+    <div class="card-inner w-full h-full transition-transform duration-300 ease-in-out transform-style-preserve-3d ">
+      <div class="card-front w-full h-full absolute top-0 left-0 shadow-lg bg-cover bg-center "
+           :style="{ backgroundImage: `url(${card.isFlipped || card.isMatched ? card.image : '/carta.png'})` }">
       </div>
-      <div class="card-back w-full h-full absolute top-0 left-0 bg-green-600 text-white text-2xl font-bold rounded-lg shadow-lg flex items-center justify-center transform rotate-y-180">
-        {{ card.value }}
+      <div class="card-back w-full h-full absolute top-0 left-0 bg-green-600 text-white text-2xl font-bold  shadow-lg flex items-center justify-center transform rotate-y-180">
+        <!-- Aqui, você pode esconder o valor e deixá-lo visível apenas quando a carta estiver virada -->
+        <img v-if="card.isFlipped || card.isMatched" :src="card.image" alt="card image" class="w-full h-full object-cover" />
       </div>
     </div>
   </div>
@@ -27,6 +29,7 @@ defineProps({
   perspective: 1200px;
   cursor: pointer;
   transition: transform 0.3s ease;
+
 }
 
 .card-inner {
@@ -35,6 +38,7 @@ defineProps({
   height: 100%;
   transition: transform 0.3s ease-in-out;
   transform-style: preserve-3d;
+  
 }
 
 .card.flipped .card-inner {
@@ -83,7 +87,8 @@ defineProps({
   }
 }
 
-.card-front,
+
+
 .card-back {
   position: absolute;
   width: 100%;
@@ -94,25 +99,28 @@ defineProps({
   align-items: center;
   font-size: 2rem;
   font-weight: bold;
-  border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  
+  
 }
 
 .card-front {
-  background-image: url('/carta.png');
   color: white;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   border: 1px solid black;
   box-sizing: border-box;
+  
 }
 
 .card-back {
-  background-color: #269e58;
+  background-color: #cbeeff;
   color: white;
   transform: rotateY(180deg);
   border: 1px solid black;
   box-sizing: border-box;
+  
 }
+
 </style>

@@ -52,7 +52,7 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref} from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import { useRouter } from 'vue-router'
   import AlertMessage from '@/components/ui/alerts/AlertMessage.vue'
@@ -61,17 +61,21 @@
   const router = useRouter()
   const showAlert = ref(false)
   const alertMessage = ref('')
+
+
   
   const handleGameModeClick = (route) => {
-    if (authStore.isAuthenticated) {
-      router.push(route)
-    } else {
-      showAlert.value = true
-      alertMessage.value = 'Alert! Please log in / Register to proceed.'
-    }
-    setTimeout(() => {
-      showAlert.value = false;
-    }, 4000); 
+  if (authStore.user) {
+    router.push(route); // Redireciona para a rota
+  } else {
+    showAlert.value = true;
+    alertMessage.value = 'Alert! Please log in/Register to proceed.';
   }
+  setTimeout(() => {
+    showAlert.value = false;
+  }, 4000); 
+};
+
+
   </script>
   

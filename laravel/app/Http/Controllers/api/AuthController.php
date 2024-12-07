@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,6 +8,9 @@ use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+
 
 
 class AuthController extends Controller
@@ -37,11 +40,23 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request)
-    {
-        $this->purgeExpiredTokens();
-        $this->revokeCurrentToken($request->user());
-        return response()->json(null, 204);
-    }
+{
+    // Purga os tokens expirados
+    $this->purgeExpiredTokens();
+    
+    // Revogar o token atual
+    $this->revokeCurrentToken($request->user());
+    
+    // Excluindo o token manualmente da tabela de tokens
+    $user = $request->user();
+    $user->tokens->each(function ($token) use ($user) {
+        if ($token->id === $user->currentAccessToken()->id) {
+            $token->delete();  // Deleta o token do usuário
+        }
+    });
+
+    return response()->json(null, 204);
+}
 
     public function refreshToken(Request $request)
     {
@@ -51,4 +66,8 @@ class AuthController extends Controller
         $token = $request->user()->createToken('authToken', ['*'], now()->addHours(2))->plainTextToken;
         return response()->json(['token' => $token]);
     }
+
+
+   
+
 }

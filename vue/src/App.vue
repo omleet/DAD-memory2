@@ -16,6 +16,7 @@
             <RouterLink to="/"
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors"
               active-class="text-blue-600 font-semibold">
+             
               Home
             </RouterLink>
 
@@ -24,6 +25,7 @@
               <button
                 class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors flex items-center"
                 type="button">
+               
                 Play
               </button>
               <!-- Dropdown menu -->
@@ -33,12 +35,13 @@
                   <li>
                     <RouterLink to="/singleplayer"
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      
                       Singleplayer
                     </RouterLink>
                   </li>
                   <li>
-                    <RouterLink 
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <RouterLink class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      
                       <button @click="handleGameModeClick('/multiplayer', $event)">Multiplayer</button>
                     </RouterLink>
                   </li>
@@ -49,35 +52,43 @@
             <!-- Outros links -->
             <RouterLink to="/websocket"
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
+              
               WebSockets
             </RouterLink>
-            <RouterLink to="/laraveltester"
-              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
-              LaravelTester
-            </RouterLink>
+           
             <RouterLink to="/leaderboardsall"
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
               Leaderboards
+            </RouterLink>
+
+            <RouterLink v-if="storeAuth.user" to="#"
+              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
+              Transactions
             </RouterLink>
           </div>
 
           <!-- Exibir usuário logado ou botão Login/Register -->
           <div class="ml-auto flex items-center space-x-3">
             <!-- Quando logado -->
-            <div v-if="storeAuth.isAuthenticated" class="flex items-center space-x-3 relative group">
+            <div v-if="storeAuth.user" class="flex items-center space-x-3 relative group">
               <!-- Coins -->
               <div class="flex items-center text-gray-900 font-medium space-x-2">
-                <span class="material-icons text-yellow-500">monetization_on</span>
-                <span class="text-green-500 text-bold">{{ storeAuth.user.brain_coins_balance ?? 0 }}</span>
+                <span class="material-icons text-yellow-600">attach_money</span>
+                <span class="text-green-500 text-bold">{{ storeAuth.balance ?? 0 }}</span>
               </div>
+
               <!-- Nome do usuário -->
-              <span class="text-gray-900 font-medium">{{ storeAuth.user.name }}</span>
+              <span class="text-black font-medium">{{ storeAuth.userFirstLastName }}</span>
+
               <!-- Imagem do perfil com hover para o menu -->
               <div class="relative group">
-                <img v-if="storeAuth.user" class="w-14 h-14 rounded-full" :src="storeAuth.photo_filename || avatarNoneAssetURL " alt="Rounded avatar"
-                  @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false" />
+                <RouterLink to="/profile">
+                  <img class="w-14 h-14 rounded-full" :src="storeAuth.userPhotoUrl || avatarNoneAssetURL"
+                    alt="Profile picture" @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false" />
+                </RouterLink>
+
                 <!-- Menu Dropdown -->
-                <div v-show="isDropdownOpen"
+                <div v-if="isDropdownOpen"
                   class="absolute right-0 mt-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 z-10"
                   @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false">
                   <ul class="py-2 text-sm text-gray-700">
@@ -109,6 +120,7 @@
               class="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-blue-600 active:bg-blue-700 mr-35"
               active-class="bg-blue-700">
               Login/Register
+              
             </RouterLink>
           </div>
         </nav>
@@ -131,22 +143,23 @@
 <script setup>
 import Toaster from '@/components/ui/toast/Toaster.vue';
 import { ref } from 'vue';
-
 import { useAuthStore } from '@/stores/auth';
-import { RouterLink, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import AlertMessage from '@/components/ui/alerts/AlertMessage.vue';
 import avatarNoneAssetURL from '@/assets/avatar-none.png';
+import { useRouter } from 'vue-router';
 
-const storeAuth = useAuthStore();
 const router = useRouter();
+const storeAuth = useAuthStore();
 const showAlert = ref(false);
 const isDropdownOpen = ref(false);
 const alertMessage = ref('');
 
 
-const logout = async () => {
-  storeAuth.logout();  // Executa o logout no store
-  await router.push('/loginform');  // Redireciona para a página inicial de forma segura usando Vue Router
+
+// Função de logout
+const logout = () => {
+  storeAuth.logout();
   alertMessage.value = 'You have successfully logged out.';  // Mensagem de sucesso
   showAlert.value = true;  // Exibe a mensagem
   setTimeout(() => {
@@ -158,14 +171,14 @@ const handleGameModeClick = async (route, event) => {
   event.preventDefault();  // Previne a navegação ao clicar
 
   // Verifica se o utilizador está autenticado
-  if (storeAuth.isAuthenticated) {
+  if (storeAuth.user) {
     // Se o utilizador estiver autenticado, navega para a página Multiplayer
     await router.push(route);
   } else {
     // Caso contrário, exibe um alerta e não permite navegação
     showAlert.value = true;
-    alertMessage.value = 'Alert! Please Log in/Register to proceed.';
-    
+    alertMessage.value = 'Alert! Please log in / Register to proceed.';
+
     // Esconde o alerta após 4 segundos
     setTimeout(() => {
       showAlert.value = false;

@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
+    <div v-if="authStore.user"  class="bg-gray-100 p-6 rounded-lg shadow-lg">
         <div class="max-w-2xl mx-auto py-8">
             <!-- Título Multiplayer -->
             <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">Multiplayer Game</h2>
@@ -41,5 +41,14 @@
 </template>
 
 <script setup>
-// Aqui você pode adicionar seu código Vue.js, se necessário.
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const authStore = useAuthStore()
+
+if (!authStore.user) {
+    router.push('/')  // Redireciona para a página home se o usuário não estiver autenticado
+}
 </script>

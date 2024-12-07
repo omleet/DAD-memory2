@@ -3,15 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +23,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
         'nickname',
         'type',
         'photo_filename',
@@ -48,16 +49,13 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'blocked' => 'boolean',
         ];
     }
 
-    public function getPhotoUrlAttribute()
+    public function gamesWon() : HasMany
     {
-        if ($this->photo_filename) {
-            // Supondo que as fotos estão na pasta "public/photos"
-            return asset("storage/photos/{$this->photo_filename}");
-        }
-
-        return asset('images/default-avatar.png'); // URL para avatar padrão
+        return $this->hasMany(Games::class, 'winner_user_id');
     }
+    
 }
