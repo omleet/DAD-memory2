@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Hash;
-
+use App\Http\Requests\RegisterUserRequest;
 
 
 
@@ -88,6 +88,11 @@ class UserController extends Controller
         return response()->json([
             'message' => 'ID: '. $user->id .', Name: '. $user->name . ' deleted!'
         ]);
+    }
+
+    public function register(RegisterUserRequest $request)
+    {
+        
     }
 
     

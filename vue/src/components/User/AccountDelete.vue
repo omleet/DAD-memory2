@@ -65,7 +65,7 @@ const removeAccountConfirmed = async () => {
     <div class="max-w-2xl mx-auto py-8">
       <h2 class="text-2xl font-bold text-gray-900 mb-6">Account Removal</h2>
       <div class="mb-4">
-        <label for="currentPassword" class="block text-gray-700">Your Current Password</label>
+        <label for="currentPassword" class="block text-gray-700">To delete your account, please insert your current Password</label>
         <input
           id="currentPassword"
           type="password"
@@ -77,13 +77,13 @@ const removeAccountConfirmed = async () => {
       <div class="flex justify-between mt-6">
         <button
           @click.prevent="removeAccount"
-          class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+          class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2"
         >
           Remove Account
         </button>
         <button
           @click.prevent="cancel"
-          class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
+          class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded flex items-center space-x-2"
         >
           Cancel
         </button>

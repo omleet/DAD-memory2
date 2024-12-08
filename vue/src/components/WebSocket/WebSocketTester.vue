@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject } from 'vue'
-import Button from './ui/button/Button.vue';
+import Button from '@/components/ui/button/Button.vue';
 import { useRouter } from 'vue-router'
 const router = useRouter()
 

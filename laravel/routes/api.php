@@ -31,3 +31,4 @@ Route::get('/leaderboard-multiplayer-efficient-players', [LeaderBoardsController
 //Users
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::delete('/users/{user}', [UserController::class, 'delete']);
+Route::post('/users', [UserController::class, 'register']);
