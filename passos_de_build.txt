@@ -13,9 +13,9 @@ composer update
 
 Base de Dados:
 php artisan key:generate
-./vendor/bin/sail artisan config:clear
-./vendor/bin/sail artisan config:cache
-php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+./vendor/bin/sail artisan config:clear !--- nao fazer
+./vendor/bin/sail artisan config:cache !--- nao fazer 
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider" !--- nao fazer
 
 
 Vue
@@ -26,3 +26,14 @@ Sockets
 npm install socket.io
 node index.js
 
+------------------------
+php artisan route:list
+
+php artisan route:clear
+php artisan cache:clear
+php artisan route:cache
+
+
+? composer dump-autoload -o !--- nao fazer
+? composer update !--- nao fazer
+? composer install !--- nao fazer
