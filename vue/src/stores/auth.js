@@ -161,6 +161,9 @@ export const useAuthStore = defineStore('auth', () => {
     if (credentials.nickname) {
       payload.nickname = credentials.nickname
     }
+    if (credentials.password) {
+      payload.password = credentials.password
+    }
     if (credentials.photo_filename) {
       payload.photo_filename = credentials.photo_filename
     }
