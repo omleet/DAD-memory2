@@ -244,6 +244,90 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  /*const register = async (credentials) => {
+    const payload = {
+      email: credentials.email,
+      password: credentials.password,
+      name: credentials.name,
+      nickname: credentials.nickname,
+      type: credentials.type,
+      photo_filename: credentials.photo_filename // Base64 encoded image
+    }
+
+    try {
+      const response = await axios.post('/users', payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      if (credentials.type === 'P') {
+        router.push('/loginform')
+      }
+      toast({
+        description: 'User has been created correctly!',
+      })
+      return response.data
+    } catch (e) {
+      if (e.response) {
+        storeError.setErrorMessages(e.response.data.message, e.response.data.errors, e.response.status, 'Signup Error!')
+      } else {
+        console.log(e)
+        storeError.setErrorMessages('An unexpected error occurred.')
+      }
+      return false
+    }
+  }*/
+
+    const register = async (credentials) => {
+      const { email, password, name, nickname, type, photo_filename } = credentials;
+    
+      const payload = {
+        email,
+        password,
+        name,
+        nickname,
+        type,
+        photo_filename, // Base64 encoded image
+      };
+    
+      try {
+        // Envia a requisição para criar o usuário
+        const response = await axios.post('/users', payload, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+    
+        // Redireciona para a página de login se o tipo for "P"
+        if (type === 'P') {
+          router.push('/loginform');
+        }
+    
+        // Exibe a mensagem de sucesso
+        toast({ description: 'User has been created correctly!' });
+    
+        // Retorna os dados da resposta
+        return response.data;
+    
+      } catch (e) {
+        // Verifica se a resposta do servidor contém erros detalhados
+        if (e.response) {
+          const { data, status } = e.response;
+          storeError.setErrorMessages(
+            data.message || 'An error occurred during registration.',
+            data.errors || [],
+            status,
+            'Signup Error!'
+          );
+        } else {
+          console.error(e);
+          storeError.setErrorMessages('An unexpected error occurred.');
+        }
+    
+        // Retorna false em caso de erro
+        return false;
+      }
+    };
+    
+
 
   return {
     user,
@@ -262,6 +346,7 @@ export const useAuthStore = defineStore('auth', () => {
     canUserDeleteOwnAccount,
     isAdministrator,
     validatePassword,
-    accountRemoval
+    accountRemoval,
+    register
   }
 })
