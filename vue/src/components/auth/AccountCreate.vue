@@ -55,7 +55,7 @@ const register = () => {
         email: '',
         password: '',
         name: '',
-        nickname: '',
+        nickname: '',     
         type: props.userType,
         photo_filename: null
     }

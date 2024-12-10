@@ -15,6 +15,7 @@ import LeaderboardsAll from '@/components/Boards/LeaderboardsAll.vue'
 import PublicLeaderboardsByTime from '@/components/Boards/PublicLeaderboardsByTime.vue'
 import PublicLeaderboardsByMoves from '@/components/Boards/PublicLeaderboardsByMoves.vue'
 import PublicLeaderboardMultiplayer from '@/components/Boards/PublicLeaderboardMultiplayer.vue'
+import  PurchaseBraincoins from '@/components/Purchases/PurchaseBraincoins.vue'
 import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
 
@@ -108,6 +109,11 @@ const router = createRouter({
       name: 'accountdelete',
       component: AccountDelete,
     },
+    {
+      path: '/purchasebraincoins',
+      name: 'purchasebraincoins',
+      component: PurchaseBraincoins,
+    },
 
     
     
@@ -124,6 +130,10 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.name == "profile" && (!storeAuth.user)) {
+    next({ name: 'loginform' })
+    return
+  }
+  if ((to.name == "profile" || to.name == "purchasebraincoins") && (!storeAuth.user)) {
     next({ name: 'loginform' })
     return
   }

@@ -65,6 +65,11 @@
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
               Transactions
             </RouterLink>
+
+            <RouterLink v-if="storeAuth.user" to="/purchasebraincoins"
+            class="text-yellow-500 hover:bg-green-600 border border-green-500 px-6 py-2 rounded-full text-lg font-medium transition-colors">
+              BUY BRAINCOINS
+            </RouterLink>
           </div>
 
           <!-- Exibir usuário logado ou botão Login/Register -->
