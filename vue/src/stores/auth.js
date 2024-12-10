@@ -202,6 +202,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await axios.get('users/me')
       user.value = response.data.data
+      
       return user.value
     } catch (e) {
       clearUser()

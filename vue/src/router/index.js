@@ -133,10 +133,12 @@ router.beforeEach(async (to, from, next) => {
     next({ name: 'loginform' })
     return
   }
-  if ((to.name == "profile" || to.name == "purchasebraincoins") && (!storeAuth.user)) {
-    next({ name: 'loginform' })
+
+  if (to.name == "purchasebraincoins" && (!storeAuth.user)) {
+    next({ name: 'home' })
     return
   }
+ 
   next()
 })
 

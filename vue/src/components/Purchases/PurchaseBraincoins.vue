@@ -1,131 +1,151 @@
 <template>
-    <div class="purchase-container">
-      <div class="balance-info">
-        <h2 class="text-lg font-semibold">Current Brain Coins: {{ balance }}</h2>
-        <p class="text-sm text-gray-500">1 EUR = 10 Brain Coins</p>
+  <div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold mb-6 text-center">Purchase Brain Coins</h2>
+    <form @submit.prevent="purchaseBrainCoins" class="space-y-6">
+      <!-- Payment Method Dropdown -->
+      <div>
+        <label for="paymentType" class="block text-lg font-medium text-gray-700">Payment Method</label>
+        <select v-model="paymentType" id="paymentType" class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="MBWAY">MBWAY</option>
+          <option value="PAYPAL">PAYPAL</option>
+          <option value="IBAN">IBAN</option>
+          <option value="MB">MB</option>
+          <option value="VISA">VISA</option>
+        </select>
       </div>
-  
-      <div class="purchase-options">
-        <label for="amount" class="block text-lg font-semibold">Amount to Purchase (in EUR)</label>
-        <input
-          v-model="amountInEuros"
-          type="number"
-          id="amount"
-          class="border p-2 rounded-md w-full"
-          min="1"
-          :max="maxAmountInEuros"
-          placeholder="Enter amount in EUR"
-          required
+
+      <!-- Reference Input -->
+      <div>
+        <label for="reference" class="block text-lg font-medium text-gray-700">Reference</label>
+        <input v-model="reference" type="text" id="reference" required 
+          class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
-  
-        <button
-          @click="handlePurchase"
-          class="mt-4 bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition"
-          :disabled="isProcessing || !amountInEuros || amountInEuros < 1"
-        >
-          {{ isProcessing ? 'Processing...' : 'Buy Brain Coins' }}
-        </button>
       </div>
-  
-      <div v-if="showAlert" class="alert mt-4">
-        <p :class="alertClass">{{ alertMessage }}</p>
+
+      <!-- Amount Input -->
+      <div>
+        <label for="value" class="block text-lg font-medium text-gray-700">Amount</label>
+        <input v-model="value" type="number" id="value" required min="1" max="99" 
+          class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
       </div>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  import { useAuthStore } from '@/stores/auth';
-  //import { useRouter } from 'vue-router';
-  
-  const storeAuth = useAuthStore();
-  //const router = useRouter();
-  
-  // States
-  const amountInEuros = ref(1); // default amount in EUR to purchase
-  const balance = ref(storeAuth.balance || 0);
-  const isProcessing = ref(false);
-  const showAlert = ref(false);
-  const alertMessage = ref('');
-  const alertClass = ref('text-green-500');
-  
-  // Maximum purchase amount in EUR (you can adjust this based on your needs)
-  const maxAmountInEuros = 1000; // You can set a limit for the max number of coins that can be purchased
-  
-  // Handle purchase function
-  const handlePurchase = async () => {
-    if (isProcessing.value || !amountInEuros.value || amountInEuros.value < 1) return;
-  
-    isProcessing.value = true;
-  
-    const coinsToPurchase = amountInEuros.value * 10; // 1 EUR = 10 Brain Coins
-    const transactionData = {
-      userId: storeAuth.user.id,
-      brainCoins: coinsToPurchase,
-      type: 'purchase', // This can be used to identify the type of transaction
-      amountInEuros: amountInEuros.value,
+
+      <!-- Submit Button -->
+      <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+        Purchase Brain Coins
+      </button>
+    </form>
+
+    <!-- Error or Success Message -->
+    <p v-show="errorMessage" class="mt-4 text-red-500 text-center">{{ errorMessage }}</p>
+    <p v-show="successMessage" class="mt-4 text-green-500 text-center">{{ successMessage }}</p>
+  </div>
+</template>
+<script>
+import { ref } from 'vue';
+import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
+
+
+export default {
+  data() {
+    return {
+      paymentType: '',   // Make sure these are initialized correctly
+      reference: '',     // Same here
+      value: null,       // Set value to null initially
+      errorMessage: '',  // Initialize error message
+      successMessage: '' // Initialize success message
     };
-  
-    try {
-      // Assuming you have an API to process the purchase
-      const response = await fetch('/api/purchase-brain-coins', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${storeAuth.token}`,
-        },
-        body: JSON.stringify(transactionData),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        // Update user balance after successful purchase
-        storeAuth.updateBalance(storeAuth.balance + coinsToPurchase);
-        alertMessage.value = `Successfully purchased ${coinsToPurchase} Brain Coins!`;
-        alertClass.value = 'text-green-500'; // success
-      } else {
-        alertMessage.value = `Failed to process the purchase: ${data.message}`;
-        alertClass.value = 'text-red-500'; // error
+  },
+  methods: {
+    
+    async purchaseBrainCoins() {
+      try {
+        // Reset messages before submitting
+        this.errorMessage = '';
+        this.successMessage = ''; // Reset success message
+
+        // Validate data on frontend (you can also send this to the backend)
+        if (!this.validateInput()) {
+          return;
+        }
+
+        // Send request to the backend API
+        const response = await axios.post('/purchasebraincoins', {
+          type: this.paymentType,
+          reference: this.reference,
+          value: this.value
+        });
+
+        // Handle success response and show success message
+        if (response.status === 200) {
+          this.successMessage = response.data.message;
+          console.log('Brain coins purchased successfully:', response.data);
+
+          
+         
+
+          // Optionally clear form or reset values
+          this.paymentType = '';
+          this.reference = '';
+          this.value = null;
+          
+        }
+      } catch (error) {
+        // Handle error response
+        if (error.response && error.response.data) {
+          this.errorMessage = error.response.data.message || 'An error occurred.';
+        } else {
+          this.errorMessage = 'Unexpected error occurred.';
+        }
+
+        // Reset success message in case of failure
+        this.successMessage = '';
       }
-    } catch (error) {
-      alertMessage.value = 'Error processing the transaction. Please try again later.';
-      alertClass.value = 'text-red-500'; // error
-    } finally {
-      isProcessing.value = false;
-      showAlert.value = true;
-  
-      setTimeout(() => {
-        showAlert.value = false; // Hide the alert after a few seconds
-      }, 4000);
+    },
+    validateInput() {
+      if (this.value <= 0 || this.value > 99) {
+        this.errorMessage = "Value must be between 1 and 99.";
+        return false;
+      }
+
+      // Further validation for reference based on payment type
+      if (!this.validateReference()) {
+        return false;
+      }
+
+      return true;
+    },
+    validateReference() {
+      // Add reference validation based on payment type
+      if (this.paymentType === 'MBWAY' && !/^9\d{8}$/.test(this.reference)) {
+        this.errorMessage = 'Invalid MBWAY reference.';
+        return false;
+      }
+
+      if (this.paymentType === 'PAYPAL' && !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(this.reference)) {
+        this.errorMessage = 'Invalid PayPal email.';
+        return false;
+      }
+
+      if (this.paymentType === 'IBAN' && !/^[A-Za-z]{2}\d{23}$/.test(this.reference)) {
+        this.errorMessage = 'Invalid IBAN reference.';
+        return false;
+      }
+
+      if (this.paymentType === 'MB' && !/^\d{5}-\d{9}$/.test(this.reference)) {
+        this.errorMessage = 'Invalid MB reference.';
+        return false;
+      }
+
+      if (this.paymentType === 'VISA' && !/^4\d{15}$/.test(this.reference)) {
+        this.errorMessage = 'Invalid VISA reference.';
+        return false;
+      }
+
+      return true;
     }
-  };
-  </script>
-  
-  <style scoped>
-  .purchase-container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9fafb;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
-  
-  .alert {
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  .alert.success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-  }
-  
-  .alert.error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-  }
-  </style>
-  
+};
+</script>
+

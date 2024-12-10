@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderBoardsController;
 use App\Http\Controllers\api\UserController;
-use App\Http\Controllers\BrainCoinsController;
+use App\Http\Controllers\api\BrainCoinsController;
 
 
 //Auth API
@@ -18,6 +18,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/purchasebraincoins', [BrainCoinsController::class, 'purchaseBrainCoins']);  // Endpoint for purchasing brain coins
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
+
+
 
 
 
