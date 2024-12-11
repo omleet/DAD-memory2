@@ -3,7 +3,6 @@ import { useAuthStore } from '@/stores/auth'
 import HomeComponent from '@/components/HomeComponent.vue'
 import WebSocketTester from '@/components/WebSocket/WebSocketTester.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
-import ForgottenPasswordForm from '@/components/auth/ForgottenPasswordForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 import SinglePlayerGame from '@/components/GameMode/SinglePlayerGame.vue'
 import MultiplayerGame from '@/components/GameMode/MultiplayerGame.vue'
@@ -41,11 +40,6 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterForm
-    },
-    {
-      path: '/passwordrecovery',
-      name: 'passwordrecovery',
-      component: ForgottenPasswordForm
     },
     {
       path: '/cardgame',

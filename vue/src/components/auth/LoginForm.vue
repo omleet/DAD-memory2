@@ -77,10 +77,7 @@ const login = () => {
             Don't have an account yet? 
             <router-link to="/register" class="text-blue-500 hover:text-blue-700">Register here</router-link>
           </p>
-          <p>
-            Forgot your password? 
-            <router-link to="/passwordrecovery" class="text-blue-500 hover:text-blue-700">Recover password</router-link>
-          </p>
+        
         </div>
       </form>
     </div>

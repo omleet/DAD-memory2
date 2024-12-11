@@ -14,18 +14,18 @@
           <!-- Navegação principal -->
           <div class="flex items-center space-x-5 hidden sm:flex">
             <RouterLink to="/"
-              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors"
-              active-class="text-blue-600 font-semibold">
-             
+              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
+              active-class="text-blue-600 font-semibold border-blue-600">
               Home
             </RouterLink>
+
 
             <!-- Dropdown "Play" com hover -->
             <div class="relative group">
               <button
-                class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors flex items-center"
+                class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
                 type="button">
-               
+
                 Play
               </button>
               <!-- Dropdown menu -->
@@ -35,13 +35,13 @@
                   <li>
                     <RouterLink to="/singleplayer"
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                      
+
                       Singleplayer
                     </RouterLink>
                   </li>
                   <li>
                     <RouterLink class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                      
+
                       <button @click="handleGameModeClick('/multiplayer', $event)">Multiplayer</button>
                     </RouterLink>
                   </li>
@@ -51,18 +51,20 @@
 
             <!-- Outros links -->
             <RouterLink to="/websocket"
-              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
-              
+              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
+              active-class="text-blue-600 font-semibold border-blue-600">
               WebSockets
             </RouterLink>
-           
+
             <RouterLink to="/leaderboardsall"
-              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
+              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
+              active-class="text-blue-600 font-semibold border-blue-600">
               Leaderboards
             </RouterLink>
 
             <RouterLink v-if="storeAuth.user" to="#"
-              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
+              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
+              active-class="text-blue-600 font-semibold border-blue-600">
               Transactions
             </RouterLink>
           </div>
@@ -72,10 +74,12 @@
             <!-- Quando logado -->
             <div v-if="storeAuth.user" class="flex items-center space-x-3 relative group">
               <!-- Coins -->
-              <div class="flex items-center text-gray-900 font-medium space-x-2">
+              <div
+                class="flex items-center text-gray-900 font-medium space-x-2 rounded-full border border-gray-500 text-white px-4 py-2">
                 <span class="material-icons text-yellow-600">attach_money</span>
-                <span class="text-green-500 text-bold">{{ storeAuth.balance ?? 0 }}</span>
+                <span class="text-green-500 font-bold">{{ storeAuth.balance ?? 0 }}</span>
               </div>
+
 
               <!-- Nome do usuário -->
               <span class="text-black font-medium">{{ storeAuth.userFirstLastName }}</span>
@@ -120,7 +124,7 @@
               class="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-blue-600 active:bg-blue-700 mr-35"
               active-class="bg-blue-700">
               Login/Register
-              
+
             </RouterLink>
           </div>
         </nav>
