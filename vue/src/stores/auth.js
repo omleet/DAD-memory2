@@ -168,6 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
       payload.photo_filename = credentials.photo_filename
     }
 
+
     console.log(payload);
     try {
       const response = await axios.put(`/users/${user.value.id}`, payload, {

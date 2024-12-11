@@ -61,7 +61,7 @@
               Leaderboards
             </RouterLink>
 
-            <RouterLink v-if="storeAuth.user" to="#"
+            <RouterLink v-if="storeAuth.user" to="/transactions"
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
               Transactions
             </RouterLink>
@@ -143,7 +143,7 @@
     </footer>
     <AlertMessage v-if="showAlert" :message="alertMessage" :duration="10000" />
   </div>
-  <PurchaseBraincoins @coins-purchased="updateBalance" /> 
+  
 </template>
 
 <script setup>

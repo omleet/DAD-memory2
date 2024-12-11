@@ -18,6 +18,7 @@ import PublicLeaderboardMultiplayer from '@/components/Boards/PublicLeaderboardM
 import  PurchaseBraincoins from '@/components/Purchases/PurchaseBraincoins.vue'
 import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
+import TransactionListUser from '@/components/Transactions/TransactionListUser.vue'
 
 
 const router = createRouter({
@@ -114,6 +115,11 @@ const router = createRouter({
       name: 'purchasebraincoins',
       component: PurchaseBraincoins,
     },
+    {
+      path: '/transactions',
+      name: 'transactions',
+      component: TransactionListUser,
+    },
 
     
     
@@ -129,15 +135,12 @@ router.beforeEach(async (to, from, next) => {
       await storeAuth.restoreToken()
   }
 
-  if (to.name == "profile" && (!storeAuth.user)) {
+  if ((to.name == "profile" || to.name == "purchasebraincoins" || to.name == "transactions" )&& (!storeAuth.user)) {
     next({ name: 'loginform' })
     return
   }
 
-  if (to.name == "purchasebraincoins" && (!storeAuth.user)) {
-    next({ name: 'home' })
-    return
-  }
+  
  
   next()
 })

@@ -48,12 +48,13 @@ class BrainCoinsController extends Controller
 
             // Add the brain coins to the user's balance
             $user->brain_coins_balance += $brainCoinsToAdd;
-            $user->save();
+            //$user->save();
 
             // Create a transaction record for this purchase
             Transaction::create([
                 'user_id' => $user->id,
                 'brain_coins' => $brainCoinsToAdd,
+                'euros'=>$validated['value'],
                 'type' => 'B', // Type 'B' for BrainCoins purchase
                 'transaction_datetime' => now(),
                 'payment_type' => $validated['type'],
