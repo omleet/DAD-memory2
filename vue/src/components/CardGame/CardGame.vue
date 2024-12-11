@@ -79,6 +79,8 @@ const maxInactivityTime = 21; // Tempo total para encerrar o jogo
 const inactivityWarningTime = 10; // Tempo para mostrar o aviso
 const isInactivityPopupVisible = ref(false); // Controle de visibilidade do aviso
 let inactivityInterval = null; // Intervalo para monitorar a inatividade
+const hasGameStarted = ref(false); // Indica se o jogador já começou o jogo
+
 
 const startInactivityTimer = () => {
   inactivityInterval = setInterval(() => {
@@ -117,6 +119,7 @@ const endGame = () => {
 
   alert("The game ended for inactivity!");
   resetGame(); // Reinicia o jogo
+  
 };
 
 
@@ -201,23 +204,30 @@ const shuffleCards = () => {
 };
 
 onMounted(() => {
-  startInactivityTimer(); 
   cards.splice(0, cards.length, ...generateCards(props.gridSize)); // Gera as cartas
   shuffleCards(); // Embaralha as cartas após a geração
 });
 
 
+
 const handleCardFlip = index => {
-  resetInactivityTimer();
+  resetInactivityTimer(); // Reseta o cronómetro de inatividade
+
   const card = cards[index];
-  if (card.isFlipped || card.isMatched || flippedCards.length === 2) return; // Não vira cartas se já estiverem viradas ou se já houver 2 cartas viradas
+  if (card.isFlipped || card.isMatched || flippedCards.length === 2) return; // Evita virar cartas inválidas
+
+  // Inicia o cronómetro de inatividade na primeira jogada
+  if (!hasGameStarted.value) {
+    hasGameStarted.value = true;
+    startInactivityTimer(); // Agora o cronómetro de inatividade só começa aqui
+  }
 
   card.isFlipped = true; // Vira a carta
-  flippedCards.push(index); // Adiciona o índice da carta na lista das cartas viradas
+  flippedCards.push(index); // Adiciona o índice da carta à lista das cartas viradas
 
   if (!timerStarted.value) {
     timerStarted.value = true;
-    startTimer();
+    startTimer(); // Inicia o cronómetro do jogo
   }
 
   if (flippedCards.length === 2) {
@@ -236,18 +246,23 @@ const handleCardFlip = index => {
         firstCard.isFlipped = false;
         secondCard.isFlipped = false;
         flippedCards.length = 0; // Limpa as cartas viradas
-      }, 1000); // Diminui a visibilidade das cartas por 1 segundo
+      }, 1000); // Espera 1 segundo antes de virar as cartas novamente
     }
-
   }
 
   if (isGameComplete.value) {
     stopTimer();
+    stopInactivityTimer(); // Para o cronómetro de inatividade ao finalizar o jogo
   }
 };
 
+
+
+
 const resetGame = () => {
-  resetInactivityTimer();
+  resetInactivityTimer(); // Reseta o cronómetro de inatividade
+  stopInactivityTimer(); // Certifica-se de que o cronómetro esteja parado
+
   cards.forEach(card => {
     card.isFlipped = false;
     card.isMatched = false;
@@ -257,6 +272,7 @@ const resetGame = () => {
   mistakes.value = 0;
   timer.value = 0;
   timerStarted.value = false;
+  hasGameStarted.value = false; // Marca que o jogo ainda não começou
 
   setTimeout(() => {
     cards.splice(0, cards.length, ...generateCards(props.gridSize));
@@ -265,6 +281,9 @@ const resetGame = () => {
 
   clearInterval(timerInterval);
 };
+
+
+
 
 const startTimer = () => {
   timerInterval = setInterval(() => {

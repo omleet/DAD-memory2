@@ -73,5 +73,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Current Password is incorrect!'], 400);
         }
         return response()->json(['message' => 'The Password is valid!'], 200);
+        
     }
 }
