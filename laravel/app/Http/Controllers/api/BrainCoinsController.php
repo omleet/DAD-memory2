@@ -4,9 +4,10 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Models\Transaction;
+use App\Models\User;
 
 class BrainCoinsController extends Controller
 {
@@ -28,6 +29,13 @@ class BrainCoinsController extends Controller
             return response()->json(['message' => $validationErrors], 422);
         }
 
+        // Retrieve the authenticated user
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         // Prepare the payload for the external API request
         $payload = [
             'type' => $validated['type'],
@@ -40,21 +48,19 @@ class BrainCoinsController extends Controller
 
         if ($response->status() == 201) {
             // Successfully processed the payment
-            // Calculate brain coins (1€ = 10 Brain Coins, as an example)
-            $brainCoinsToAdd = $validated['value'] * 10;  // Conversion rate: 1€ = 10 Brain Coins
+            $brainCoinsToAdd = $validated['value'] * 10; // Conversion rate: 1€ = 10 Brain Coins
 
-            // Get the currently authenticated user
-            $user = Auth::user();
-
-            // Add the brain coins to the user's balance
+            // Update the user's brain coin balance
             $user->brain_coins_balance += $brainCoinsToAdd;
-            //$user->save();
+            $user->save();
+
+
 
             // Create a transaction record for this purchase
             Transaction::create([
                 'user_id' => $user->id,
                 'brain_coins' => $brainCoinsToAdd,
-                'euros'=>$validated['value'],
+                'euros' => $validated['value'],
                 'type' => 'B', // Type 'B' for BrainCoins purchase
                 'transaction_datetime' => now(),
                 'payment_type' => $validated['type'],
@@ -64,7 +70,7 @@ class BrainCoinsController extends Controller
             // Return a success response with the updated balance
             return response()->json([
                 'message' => 'Brain coins purchased successfully!',
-                'new_balance' => $user->brain_coins_balance,
+                'brain_coins_balance' => $user->brain_coins_balance,
             ]);
         }
 

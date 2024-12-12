@@ -149,6 +149,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const updateBalance = (newBalance) => {
+    if (user.value) {
+      user.value.brain_coins_balance = newBalance
+    }
+  }
+
   const ProfileUpdate = async (credentials) => {
     const payload = {}
 
@@ -352,6 +358,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdministrator,
     validatePassword,
     accountRemoval,
-    register
+    register,
+    updateBalance
   }
 })

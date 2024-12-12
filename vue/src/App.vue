@@ -154,7 +154,7 @@ import { RouterLink } from 'vue-router';
 import AlertMessage from '@/components/ui/alerts/AlertMessage.vue';
 import avatarNoneAssetURL from '@/assets/avatar-none.png';
 import { useRouter } from 'vue-router';
-import PurchaseBraincoins from './components/Purchases/PurchaseBraincoins.vue';
+
 
 const router = useRouter();
 const storeAuth = useAuthStore();
@@ -193,8 +193,6 @@ const handleGameModeClick = async (route, event) => {
   }
 }
 
-const updateBalance = async () => {
-  storeAuth.getDataAfterTheUpdate(); // Refresh balance after purchase
-};
+
 
 </script>

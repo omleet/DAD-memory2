@@ -18,7 +18,7 @@ class TransactionsController extends Controller
         try {
             $transactions = Transaction::where('user_id', Auth::id())
                 ->orderBy('transaction_datetime', 'desc')
-                ->get();
+                ->paginate(10);
 
             return response()->json($transactions, 200);
         } catch (\Exception $e) {

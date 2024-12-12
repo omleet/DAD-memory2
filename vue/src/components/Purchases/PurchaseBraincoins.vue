@@ -41,24 +41,23 @@
     <p v-show="successMessage" class="mt-4 text-green-500 text-center">{{ successMessage }}</p>
   </div>
 </template>
+
 <script>
-import { ref } from 'vue';
+
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
-
 
 export default {
   data() {
     return {
-      paymentType: '',   // Make sure these are initialized correctly
-      reference: '',     // Same here
-      value: null,       // Set value to null initially
+      paymentType: '',   // Ensure these are initialized
+      reference: '',     // Same for reference
+      value: null,       // Set value as null initially
       errorMessage: '',  // Initialize error message
       successMessage: '' // Initialize success message
     };
   },
   methods: {
-    
     async purchaseBrainCoins() {
       try {
         // Reset messages before submitting
@@ -82,14 +81,14 @@ export default {
           this.successMessage = response.data.message;
           console.log('Brain coins purchased successfully:', response.data);
 
-          
-         
+          // Update the balance in the Pinia store (this should come from the response)
+          const authStore = useAuthStore();
+          authStore.updateBalance(response.data.brain_coins_balance); // Assuming the response contains the new balance
 
           // Optionally clear form or reset values
           this.paymentType = '';
           this.reference = '';
           this.value = null;
-          
         }
       } catch (error) {
         // Handle error response
@@ -103,6 +102,8 @@ export default {
         this.successMessage = '';
       }
     },
+
+    // Validate the form input
     validateInput() {
       if (this.value <= 0 || this.value > 99) {
         this.errorMessage = "Value must be between 1 and 99.";
@@ -116,8 +117,9 @@ export default {
 
       return true;
     },
+
+    // Validate the reference input based on the payment type
     validateReference() {
-      // Add reference validation based on payment type
       if (this.paymentType === 'MBWAY' && !/^9\d{8}$/.test(this.reference)) {
         this.errorMessage = 'Invalid MBWAY reference.';
         return false;
@@ -148,4 +150,3 @@ export default {
   }
 };
 </script>
-

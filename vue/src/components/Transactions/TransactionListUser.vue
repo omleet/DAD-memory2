@@ -1,122 +1,138 @@
-<script>
-  import axios from "axios";
-  
-  
-  
-  export default {
-    name: "TransactionsTab",
-    data() {
-      return {
-        transactions: [],
-        loading: true,
-        error: null,
-      };
-    },
-    methods: {
-      async fetchTransactions() {
-        try {
-          const response = await axios.get("/transactions", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          this.transactions = response.data;
-        } catch (err) {
-          this.error = "Failed to fetch transactions. Please try again.";
-        } finally {
-          this.loading = false;
-        }
-      },
-      formatDate(datetime) {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(datetime).toLocaleDateString(undefined, options);
-      },
-    },
-    created() {
-      this.fetchTransactions();
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .transaction-table {
-    border-collapse: collapse;
-  }
-  
-  .transaction-table th,
-  .transaction-table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  .transaction-table th {
-    background-color: #f4f4f4;
-  }
-  
-  .transaction-table td {
-    background-color: #ffffff;
-  }
-  </style>
 <template>
-    <div class="bg-gray-100 p-6 rounded-lg shadow-lg relative">
-      <!-- Back button -->
-      <button @click="router.push('/')"
+  <div class="bg-gray-100 p-6 rounded-lg shadow-lg relative">
+    <!-- Back button -->
+    <button @click="router.push('/')"
       class="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center justify-center">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="w-5 h-5 fill-current">
         <path d="M32 15H3.41l8.29-8.29-1.41-1.42-10 10a1 1 0 0 0 0 1.41l10 10 1.41-1.41L3.41 17H32z" />
       </svg>
     </button>
-      <div class="max-w-4xl mx-auto py-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">Your Transactions</h2>
-  
-        <!-- Loading State -->
-        <div v-if="loading" class="text-center mb-8">
-          <p class="text-gray-600">Loading transactions...</p>
+
+    <div class="max-w-4xl mx-auto py-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">Your Transactions</h2>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center mb-8">
+        <p class="text-gray-600">Loading transactions...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center mb-8">
+        <p class="text-red-600">{{ error }}</p>
+      </div>
+
+      <!-- Transactions Table -->
+      <div v-else>
+        <table v-if="transactions.data.length > 0" class="transaction-table w-full table-auto text-gray-700 mb-8">
+          <thead>
+            <tr class="text-left text-sm font-semibold text-gray-800 border-b">
+              <th class="px-4 py-2">Date</th>
+              <th class="px-4 py-2">Type</th>
+              <th class="px-4 py-2">Brain Coins</th>
+              <th class="px-4 py-2">Euros</th>
+              <th class="px-4 py-2">Payment Type</th>
+              <th class="px-4 py-2">Payment Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="transaction in transactions.data" :key="transaction.id" class="border-b hover:bg-gray-50">
+              <td class="px-4 py-2">{{ formatDate(transaction.transaction_datetime) }}</td>
+              <td class="px-4 py-2">{{ transaction.type }}</td>
+              <td class="px-4 py-2">{{ transaction.brain_coins }}</td>
+              <td class="px-4 py-2">{{ transaction.euros }}</td>
+              <td class="px-4 py-2">{{ transaction.payment_type }}</td>
+              <td class="px-4 py-2">{{ transaction.payment_reference }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- No Transactions Found -->
+        <div v-else class="text-center text-gray-600">
+          <p>No transactions found.</p>
         </div>
-  
-        <!-- Error State -->
-        <div v-else-if="error" class="text-center mb-8">
-          <p class="text-red-600">{{ error }}</p>
-        </div>
-  
-        <!-- Transactions Table -->
-        <div v-else>
-          <table v-if="transactions.length > 0" class="transaction-table w-full table-auto text-gray-700 mb-8">
-            <thead>
-              <tr class="text-left text-sm font-semibold text-gray-800 border-b">
-                <th class="px-4 py-2">Date</th>
-                <th class="px-4 py-2">Type</th>
-                <th class="px-4 py-2">Brain Coins</th>
-                <th class="px-4 py-2">Euros</th>
-                <th class="px-4 py-2">Payment Type</th>
-                <th class="px-4 py-2">Payment Reference</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="transaction in transactions" :key="transaction.id" class="border-b hover:bg-gray-50">
-                <td class="px-4 py-2">{{ formatDate(transaction.transaction_datetime) }}</td>
-                <td class="px-4 py-2">{{ transaction.type }}</td>
-                <td class="px-4 py-2">{{ transaction.brain_coins }}</td>
-                <td class="px-4 py-2">{{ transaction.euros }}</td>
-                <td class="px-4 py-2">{{ transaction.payment_type }}</td>
-                <td class="px-4 py-2">{{ transaction.payment_reference }}</td>
-              </tr>
-            </tbody>
-          </table>
-  
-          <!-- No Transactions Found -->
-          <div v-else class="text-center text-gray-600">
-            <p>No transactions found.</p>
-          </div>
+
+        <!-- Pagination Controls -->
+        <div v-if="transactions.total > transactions.per_page" class="flex justify-between items-center mt-4">
+          <button @click="changePage(transactions.current_page - 1)" :disabled="transactions.current_page === 1"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Previous
+          </button>
+          <span class="text-gray-600">
+            Page {{ transactions.current_page }} of {{ transactions.last_page }}
+          </span>
+          <button @click="changePage(transactions.current_page + 1)" :disabled="transactions.current_page === transactions.last_page"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Next
+          </button>
         </div>
       </div>
     </div>
-  </template>
-    <script setup>
-    import { useRouter } from 'vue-router'
-    
-    const router = useRouter()
-      </script>
-  
-  
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+
+export default {
+  name: "TransactionsTab",
+  data() {
+    return {
+      transactions: {},
+      loading: true,
+      error: null,
+      currentPage: 1,
+    };
+  },
+  methods: {
+    async fetchTransactions(page = 1) {
+      try {
+        const response = await axios.get(`/transactions?page=${page}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        this.transactions = response.data;  // Assign the paginated data
+      } catch (err) {
+        this.error = "Failed to fetch transactions. Please try again.";
+      } finally {
+        this.loading = false;
+      }
+    },
+    formatDate(datetime) {
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      return new Date(datetime).toLocaleDateString(undefined, options);
+    },
+    changePage(page) {
+      if (page > 0 && page <= this.transactions.last_page) {
+        this.loading = true;
+        this.fetchTransactions(page);
+      }
+    },
+  },
+  created() {
+    this.fetchTransactions(this.currentPage);
+  },
+};
+</script>
+
+<style scoped>
+.transaction-table {
+  border-collapse: collapse;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.transaction-table th {
+  background-color: #f4f4f4;
+}
+
+.transaction-table td {
+  background-color: #ffffff;
+}
+</style>
