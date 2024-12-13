@@ -39,9 +39,9 @@
               <td class="px-4 py-2">{{ formatDate(transaction.transaction_datetime) }}</td>
               <td class="px-4 py-2">{{ transaction.type }}</td>
               <td class="px-4 py-2">{{ transaction.brain_coins }}</td>
-              <td class="px-4 py-2">{{ transaction.euros }}</td>
-              <td class="px-4 py-2">{{ transaction.payment_type }}</td>
-              <td class="px-4 py-2">{{ transaction.payment_reference }}</td>
+              <td class="px-4 py-2">{{ transaction.euros || '-'}}</td>
+              <td class="px-4 py-2">{{ transaction.payment_type || '-'}}</td>
+              <td class="px-4 py-2">{{ transaction.payment_reference || '-'}}</td>
             </tr>
           </tbody>
         </table>

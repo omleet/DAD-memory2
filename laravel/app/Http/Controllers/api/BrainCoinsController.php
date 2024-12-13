@@ -30,12 +30,51 @@ class BrainCoinsController extends Controller
         }
 
         // Retrieve the authenticated user
-        /** @var User $user */
         $user = Auth::user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        // Process the purchase and update the user's coins
+        $success = $this->processPurchase($user, $validated);
+        if ($success) {
+            return response()->json([
+                'message' => 'Brain coins purchased successfully!',
+                'brain_coins_balance' => $user->brain_coins_balance,
+            ]);
+        }
+
+        return response()->json(['message' => 'Payment failed. Please try again.'], 422);
+    }
+
+    /**
+     * Handle Brain Coin deduction.
+     */
+    public function deductBrainCoin(Request $request)
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Deduct a coin from the user's balance
+        $success = $this->processDeduction($user);
+        if ($success) {
+            return response()->json([
+                'message' => 'Brain Coin deducted successfully!',
+                'brain_coins_balance' => $user->brain_coins_balance,
+            ]);
+        }
+
+        return response()->json(['message' => 'Not enough Brain Coins.'], 422);
+    }
+
+    /**
+     * Process Brain Coin purchase and update the balance.
+     */
+    private function processPurchase(User $user, $validated)
+    {
         // Prepare the payload for the external API request
         $payload = [
             'type' => $validated['type'],
@@ -47,39 +86,57 @@ class BrainCoinsController extends Controller
         $response = Http::post('https://dad-202425-payments-api.vercel.app/api/debit', $payload);
 
         if ($response->status() == 201) {
-            // Successfully processed the payment
             $brainCoinsToAdd = $validated['value'] * 10; // Conversion rate: 1€ = 10 Brain Coins
-
-            // Update the user's brain coin balance
             $user->brain_coins_balance += $brainCoinsToAdd;
             $user->save();
-
-
 
             // Create a transaction record for this purchase
             Transaction::create([
                 'user_id' => $user->id,
                 'brain_coins' => $brainCoinsToAdd,
                 'euros' => $validated['value'],
-                'type' => 'B', // Type 'B' for BrainCoins purchase
+                'type' => 'P', // P for purchase
                 'transaction_datetime' => now(),
                 'payment_type' => $validated['type'],
                 'payment_reference' => $validated['reference'],
             ]);
 
-            // Return a success response with the updated balance
-            return response()->json([
-                'message' => 'Brain coins purchased successfully!',
-                'brain_coins_balance' => $user->brain_coins_balance,
-            ]);
+            return true; // Successfully processed
         }
 
-        // If the external service returned an error (not status 201)
-        return response()->json(['message' => 'Payment failed. Please try again.'], 422);
+        return false; // Payment failed
     }
 
     /**
-     * Reference validation based on payment type
+     * Process Brain Coin deduction.
+     */
+    private function processDeduction(User $user)
+    {
+        // Check if the user has enough Brain Coins
+        if ($user->brain_coins_balance < 1) {
+            return false; // Not enough coins to deduct
+        }
+
+        // Deduct 1 Brain Coin from the user's balance
+        $user->brain_coins_balance -= 1;
+        $user->save();
+
+        // Create a transaction record for this deduction
+        Transaction::create([
+            'user_id' => $user->id,
+            'brain_coins' => -1, // Negative to represent a deduction
+            'euros' => null, // No euros involved
+            'type' => 'I', // I for internal transaction (e.g., for games)
+            'transaction_datetime' => now(),
+            'payment_type' => null, // Not applicable for internal spending
+            'payment_reference' => null, // Placeholder
+        ]);
+
+        return true; // Successfully deducted
+    }
+
+    /**
+     * Reference validation based on payment type.
      */
     protected function validateReference($type, $reference)
     {
@@ -100,6 +157,7 @@ class BrainCoinsController extends Controller
             return 'Invalid VISA reference.';
         }
 
-        return null;
+        return null; // Valid reference
     }
 }
+
