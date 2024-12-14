@@ -300,9 +300,6 @@ onUnmounted(() => {
   stopInactivityTimer();
 });
 
-
-
-
 </script>
 
 
