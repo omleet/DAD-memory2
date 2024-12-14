@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderBoardsController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
-use App\Http\Controllers\api\TransactionsController;
 use App\Http\Controllers\api\GameHistoryController;
-use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\api\PersonalLeaderBoardsController;
 
 
