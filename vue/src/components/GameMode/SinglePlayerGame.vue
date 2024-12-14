@@ -19,9 +19,10 @@
         <div class="bg-white p-6 rounded-lg shadow-lg text-center">
           <h3 class="text-xl font-semibold text-gray-900 mb-6">Game Modes</h3>
           <div class="space-x-4">
-            <button @click="handleGameModeClick('/cardgame')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">
+            <RouterLink class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
+              to="/cardgame">
               Game 4x3
-            </button>
+            </RouterLink>
             <button @click="handleGameModeClick('/cardgame4x4')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">
               Game 4x4
             </button>
@@ -71,7 +72,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useSpGameStore } from '@/stores/spgame';
 import AlertMessage from '@/components/ui/alerts/AlertMessage.vue';

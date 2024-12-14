@@ -7,6 +7,8 @@ use App\Http\Controllers\LeaderBoardsController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
 use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\api\PersonalLeaderBoardsController;
+
 
 
 
@@ -16,6 +18,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users/me', [UserController::class, 'userProfile']);
     Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
     Route::post('/auth/validatepassword', [AuthController::class, 'validatepassword']);
+
+    Route::get('/scoreboards/singleplayer/personal/{filter}', [PersonalLeaderBoardsController::class, 'SingleplayerPersonal']);
+    Route::get('/scoreboards/multiplayer/personal/{filter}', [PersonalLeaderBoardsController::class, 'MultiplayerPersonal']);
 
     Route::post('/purchasebraincoins', [BrainCoinsController::class, 'purchaseBrainCoins']);
     Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);// New route

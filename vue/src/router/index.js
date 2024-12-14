@@ -18,6 +18,7 @@ import  PurchaseBraincoins from '@/components/Purchases/PurchaseBraincoins.vue'
 import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
 import TransactionListUser from '@/components/Transactions/TransactionListUser.vue'
+import PrivateLeaderboard from '@/components/Boards/PrivateLeaderBoard.vue'
 
 
 const router = createRouter({
@@ -114,6 +115,11 @@ const router = createRouter({
       name: 'transactions',
       component: TransactionListUser,
     },
+    {
+      path: '/privateleaderboard',
+      name: 'privateleaderboard',
+      component: PrivateLeaderboard,
+    },
 
     
     
@@ -129,13 +135,10 @@ router.beforeEach(async (to, from, next) => {
       await storeAuth.restoreToken()
   }
 
-  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit") && (!storeAuth.user)) {
+  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "privateleaderboard"  ) && (!storeAuth.user)) {
     next({ name: 'loginform' })
     return
   }
-
-  
- 
   next()
 })
 

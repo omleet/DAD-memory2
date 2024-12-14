@@ -62,8 +62,9 @@
               Leaderboards
             </RouterLink>
 
-            <RouterLink v-if="storeAuth.user" to="/transactions"
-              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
+            <RouterLink  v-if="storeAuth.user" to="/transactions"
+              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
+              active-class="text-blue-600 font-semibold border-blue-600">
               Transactions
             </RouterLink>
 
@@ -107,7 +108,7 @@
                       </RouterLink>
                     </li>
                     <li>
-                      <RouterLink to="#"
+                      <RouterLink to="/privateleaderboard"
                         class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Personal Scores
                       </RouterLink>
