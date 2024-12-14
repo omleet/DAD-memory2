@@ -8,6 +8,7 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
 use App\Http\Controllers\api\GameHistoryController;
 use App\Http\Controllers\api\PersonalLeaderBoardsController;
+use App\Http\Controllers\api\TransactionsController;
 
 
 
