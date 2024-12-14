@@ -19,12 +19,7 @@
         <div class="bg-white p-6 rounded-lg shadow-lg text-center">
           <h3 class="text-xl font-semibold text-gray-900 mb-6">Game Modes</h3>
           <div class="space-x-4">
-<<<<<<< HEAD
             <RouterLink class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
-=======
-           <!-- Botão para o modo de jogo 4x3 -->
-           <RouterLink class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
->>>>>>> f19336e4432b9b8f1e3d04e56e8c9740cca7f16b
               to="/cardgame">
               Game 4x3
             </RouterLink>
