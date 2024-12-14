@@ -18,7 +18,11 @@ import  PurchaseBraincoins from '@/components/Purchases/PurchaseBraincoins.vue'
 import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
 import TransactionListUser from '@/components/Transactions/TransactionListUser.vue'
+<<<<<<< HEAD
 import PrivateLeaderboard from '@/components/Boards/PrivateLeaderBoard.vue'
+=======
+import GameHistory from '@/components/GameHistory/GameHistory.vue'
+>>>>>>> f19336e4432b9b8f1e3d04e56e8c9740cca7f16b
 
 
 const router = createRouter({
@@ -116,9 +120,15 @@ const router = createRouter({
       component: TransactionListUser,
     },
     {
+<<<<<<< HEAD
       path: '/privateleaderboard',
       name: 'privateleaderboard',
       component: PrivateLeaderboard,
+=======
+      path: '/gamehistory',
+      name: 'gamehistory',
+      component: GameHistory,
+>>>>>>> f19336e4432b9b8f1e3d04e56e8c9740cca7f16b
     },
 
     

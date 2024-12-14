@@ -62,9 +62,8 @@
               Leaderboards
             </RouterLink>
 
-            <RouterLink  v-if="storeAuth.user" to="/transactions"
-              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
-              active-class="text-blue-600 font-semibold border-blue-600">
+            <RouterLink v-if="storeAuth.user" to="/transactions"
+              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
               Transactions
             </RouterLink>
 

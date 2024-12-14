@@ -56,6 +56,8 @@ export const useSpGameStore = defineStore('spgame', () => {
     showNotEnoughCoinsModal.value = false;
   };
 
+  
+
   return {
     showModal,
     showNotEnoughCoinsModal,
