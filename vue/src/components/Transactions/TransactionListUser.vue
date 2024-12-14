@@ -12,18 +12,18 @@
       <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">Your Transactions</h2>
 
       <!-- Loading State -->
-      <div v-if="loading" class="text-center mb-8">
+      <div v-if="transactionStore.loading" class="text-center mb-8">
         <p class="text-gray-600">Loading transactions...</p>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center mb-8">
-        <p class="text-red-600">{{ error }}</p>
+      <div v-else-if="transactionStore.error" class="text-center mb-8">
+        <p class="text-red-600">{{ transactionStore.error }}</p>
       </div>
 
       <!-- Transactions Table -->
       <div v-else>
-        <table v-if="transactions.data.length > 0" class="transaction-table w-full table-auto text-gray-700 mb-8">
+        <table v-if="transactionStore.transactions.data?.length > 0" class="transaction-table w-full table-auto text-gray-700 mb-8">
           <thead>
             <tr class="text-left text-sm font-semibold text-gray-800 border-b">
               <th class="px-4 py-2">Date</th>
@@ -35,13 +35,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="transaction in transactions.data" :key="transaction.id" class="border-b hover:bg-gray-50">
-              <td class="px-4 py-2">{{ formatDate(transaction.transaction_datetime) }}</td>
+            <tr v-for="transaction in transactionStore.transactions.data" :key="transaction.id" class="border-b hover:bg-gray-50">
+              <td class="px-4 py-2">{{ transactionStore.formatDate(transaction.transaction_datetime) }}</td>
               <td class="px-4 py-2">{{ transaction.type }}</td>
               <td class="px-4 py-2">{{ transaction.brain_coins }}</td>
-              <td class="px-4 py-2">{{ transaction.euros || '-'}}</td>
-              <td class="px-4 py-2">{{ transaction.payment_type || '-'}}</td>
-              <td class="px-4 py-2">{{ transaction.payment_reference || '-'}}</td>
+              <td class="px-4 py-2">{{ transaction.euros || '-' }}</td>
+              <td class="px-4 py-2">{{ transaction.payment_type || '-' }}</td>
+              <td class="px-4 py-2">{{ transaction.payment_reference || '-' }}</td>
             </tr>
           </tbody>
         </table>
@@ -52,15 +52,15 @@
         </div>
 
         <!-- Pagination Controls -->
-        <div v-if="transactions.total > transactions.per_page" class="flex justify-between items-center mt-4">
-          <button @click="changePage(transactions.current_page - 1)" :disabled="transactions.current_page === 1"
+        <div v-if="transactionStore.transactions.total > transactionStore.transactions.per_page" class="flex justify-between items-center mt-4">
+          <button @click="changePage(transactionStore.currentPage - 1)" :disabled="transactionStore.currentPage === 1"
             class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
             Previous
           </button>
           <span class="text-gray-600">
-            Page {{ transactions.current_page }} of {{ transactions.last_page }}
+            Page {{ transactionStore.currentPage }} of {{ transactionStore.transactions.last_page }}
           </span>
-          <button @click="changePage(transactions.current_page + 1)" :disabled="transactions.current_page === transactions.last_page"
+          <button @click="changePage(transactionStore.currentPage + 1)" :disabled="transactionStore.currentPage === transactionStore.transactions.last_page"
             class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
             Next
           </button>
@@ -71,47 +71,26 @@
 </template>
 
 <script>
-import axios from "axios";
-
+import { useTransactionListStore } from '@/stores/transactionlist';
+import { useRouter } from 'vue-router';
 
 export default {
-  name: "TransactionsTab",
-  data() {
-    return {
-      transactions: {},
-      loading: true,
-      error: null,
-      currentPage: 1,
+  setup() {
+    const router = useRouter();
+    const transactionStore = useTransactionListStore();
+
+    // Fetch transactions on mount
+    transactionStore.fetchTransactions();
+
+    const changePage = (page) => {
+      transactionStore.fetchTransactions(page);
     };
-  },
-  methods: {
-    async fetchTransactions(page = 1) {
-      try {
-        const response = await axios.get(`/transactions?page=${page}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        this.transactions = response.data;  // Assign the paginated data
-      } catch (err) {
-        this.error = "Failed to fetch transactions. Please try again.";
-      } finally {
-        this.loading = false;
-      }
-    },
-    formatDate(datetime) {
-      const options = { year: "numeric", month: "long", day: "numeric" };
-      return new Date(datetime).toLocaleDateString(undefined, options);
-    },
-    changePage(page) {
-      if (page > 0 && page <= this.transactions.last_page) {
-        this.loading = true;
-        this.fetchTransactions(page);
-      }
-    },
-  },
-  created() {
-    this.fetchTransactions(this.currentPage);
+
+    return {
+      router,
+      transactionStore,
+      changePage,
+    };
   },
 };
 </script>
