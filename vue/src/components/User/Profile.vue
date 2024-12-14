@@ -24,27 +24,27 @@ const alertMessage = ref('');
 
         <!-- Detalhes do Perfil -->
         <div class="space-y-4">
-          <div v-if="storeAuth.user" class="flex items-center justify-between">
+          <div  class="flex items-center justify-between">
             <span class="font-bold text-gray-900">Name:</span>
             <span class="text-gray-900">{{ storeAuth.userFirstLastName }}</span>
           </div>
-          <div v-if="storeAuth.user" class="flex items-center justify-between">
+          <div  class="flex items-center justify-between">
             <span class="font-bold text-gray-900">Nickname:</span>
             <span class="text-gray-900">{{ storeAuth.nickname }}</span>
           </div>
-          <div v-if="storeAuth.user" class="flex items-center justify-between">
+          <div  class="flex items-center justify-between">
             <span class="font-bold text-gray-900">Email:</span>
             <span class="text-gray-900">{{ storeAuth.userEmail }}</span>
           </div>
-          <div v-if="storeAuth.user" class="flex items-center justify-between">
+          <div  class="flex items-center justify-between">
             <span class="font-bold text-gray-900">Type:</span>
             <span class="text-gray-900">{{ storeAuth.userType == 'A' ? 'Admin' : 'Player' }}</span>
           </div>
-          <div v-if="storeAuth.user" class="flex items-center justify-between">
+          <div  class="flex items-center justify-between">
             <span class="font-bold text-gray-900">Brain Coins Balance:</span>
             <span class="text-gray-900">{{ storeAuth.balance }}</span>
           </div>
-          <div v-if="storeAuth.user" class="flex items-center justify-between">
+          <div  class="flex items-center justify-between">
             <span class="font-bold text-gray-900">Games Won:</span>
             <span class="text-green-800 font-bold">{{ storeAuth.gamesWon }}</span>
           </div>

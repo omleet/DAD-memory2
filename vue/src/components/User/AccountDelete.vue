@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth'; // Descomente se necessário
+import { useAuthStore } from '@/stores/auth'; 
 import AlertMessage from '@/components/ui/alerts/AlertMessage.vue';
 
 const router = useRouter();
-const storeAuth = useAuthStore(); // Use isso se tiver a store configurada
+const storeAuth = useAuthStore(); 
 
 // Refs para o formulário
 const currentPassword = ref('');
@@ -16,10 +16,6 @@ const alertMessage = ref('');
 const cancel = () => {
   router.push('/profile');
 };
-
-if (!storeAuth.user) {
-    router.push('/')  // Redireciona para a página home se o usuário não estiver autenticado
-}
 
 // Função para validar e remover a conta
 const removeAccount = async () => {
@@ -54,7 +50,7 @@ const removeAccountConfirmed = async () => {
 </script>
 
 <template>
-  <div v-if="storeAuth.user" class="bg-gray-100 p-6 rounded-lg shadow-lg relative">
+  <div class="bg-gray-100 p-6 rounded-lg shadow-lg relative">
     <!-- Botão com a seta para voltar -->
     <button @click="router.push('/profile')"
       class="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center justify-center">

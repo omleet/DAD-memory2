@@ -1,5 +1,5 @@
 <template>
-    <div v-if="authStore.user" class="bg-gray-100 p-6 rounded-lg shadow-lg relative">
+    <div  class="bg-gray-100 p-6 rounded-lg shadow-lg relative">
         <!-- Botão com a seta para voltar -->
         <button @click="router.push('/')"
             class="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center justify-center">
@@ -48,14 +48,8 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const authStore = useAuthStore()
-
-if (!authStore.user) {
-    router.push('/')  // Redireciona para a página home se o usuário não estiver autenticado
-}
 </script>
