@@ -18,6 +18,7 @@ import  PurchaseBraincoins from '@/components/Purchases/PurchaseBraincoins.vue'
 import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
 import TransactionListUser from '@/components/Transactions/TransactionListUser.vue'
+import GameHistory from '@/components/GameHistory/GameHistory.vue'
 
 
 const router = createRouter({
@@ -113,6 +114,11 @@ const router = createRouter({
       path: '/transactions',
       name: 'transactions',
       component: TransactionListUser,
+    },
+    {
+      path: '/gamehistory',
+      name: 'gamehistory',
+      component: GameHistory,
     },
 
     

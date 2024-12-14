@@ -61,7 +61,10 @@
               active-class="text-blue-600 font-semibold border-blue-600">
               Leaderboards
             </RouterLink>
-
+            <RouterLink v-if="storeAuth.user" to="/gamehistory"
+              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
+              Game History
+            </RouterLink>
             <RouterLink v-if="storeAuth.user" to="/transactions"
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
               Transactions

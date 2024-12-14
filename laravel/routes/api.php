@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderBoardsController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
-use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\api\TransactionsController;
+use App\Http\Controllers\api\GameHistoryController;
 
 
 
@@ -20,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/purchasebraincoins', [BrainCoinsController::class, 'purchaseBrainCoins']);
     Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);// New route
     Route::get('/transactions', [TransactionsController::class, 'showTransactions']);
+    Route::get('/gamehistory', [GameHistoryController::class, 'showGameHistory']);
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
 
