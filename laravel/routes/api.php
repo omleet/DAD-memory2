@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderBoardsController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\BrainCoinsController;
+use App\Http\Controllers\TransactionsController;
+
 
 
 //Auth API
@@ -14,8 +17,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
     Route::post('/auth/validatepassword', [AuthController::class, 'validatepassword']);
 
+    Route::post('/purchasebraincoins', [BrainCoinsController::class, 'purchaseBrainCoins']);
+    Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);// New route
+    Route::get('/transactions', [TransactionsController::class, 'showTransactions']);
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
+
+
 
 
 

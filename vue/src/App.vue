@@ -62,10 +62,14 @@
               Leaderboards
             </RouterLink>
 
-            <RouterLink v-if="storeAuth.user" to="#"
-              class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
-              active-class="text-blue-600 font-semibold border-blue-600">
+            <RouterLink v-if="storeAuth.user" to="/transactions"
+              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-lg font-medium transition-colors">
               Transactions
+            </RouterLink>
+
+            <RouterLink v-if="storeAuth.user" to="/purchasebraincoins"
+            class="text-yellow-500 hover:bg-green-600 border border-green-500 px-6 py-2 rounded-full text-lg font-medium transition-colors">
+              BUY BRAINCOINS
             </RouterLink>
           </div>
 
@@ -142,6 +146,7 @@
     </footer>
     <AlertMessage v-if="showAlert" :message="alertMessage" :duration="10000" />
   </div>
+  
 </template>
 
 <script setup>
@@ -152,6 +157,7 @@ import { RouterLink } from 'vue-router';
 import AlertMessage from '@/components/ui/alerts/AlertMessage.vue';
 import avatarNoneAssetURL from '@/assets/avatar-none.png';
 import { useRouter } from 'vue-router';
+
 
 const router = useRouter();
 const storeAuth = useAuthStore();
@@ -189,4 +195,7 @@ const handleGameModeClick = async (route, event) => {
     }, 4000);
   }
 }
+
+
+
 </script>
