@@ -70,30 +70,23 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { useTransactionListStore } from '@/stores/transactionlist';
 import { useRouter } from 'vue-router';
 
-export default {
-  setup() {
-    const router = useRouter();
-    const transactionStore = useTransactionListStore();
+// Create an instance of the router and store
+const router = useRouter();
+const transactionStore = useTransactionListStore();
 
-    // Fetch transactions on mount
-    transactionStore.fetchTransactions();
+// Fetch transactions on mount
+transactionStore.fetchTransactions();
 
-    const changePage = (page) => {
-      transactionStore.fetchTransactions(page);
-    };
-
-    return {
-      router,
-      transactionStore,
-      changePage,
-    };
-  },
+// Define the changePage function
+const changePage = (page) => {
+  transactionStore.fetchTransactions(page);
 };
 </script>
+
 
 <style scoped>
 .transaction-table {

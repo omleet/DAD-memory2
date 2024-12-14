@@ -1,81 +1,92 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useAuthStore } from './auth';
+import { ref } from 'vue';
 
-export const usePurchaseBrainCoinsStore = defineStore('purchaseBrainCoins', {
-  state: () => ({
-    paymentType: 'MBWAY', // Default value to avoid empty state issues
-    reference: '',
-    value: 1, // Default to avoid null issues
-    errorMessage: '',
-    successMessage: '',
-  }),
+export const usePurchaseBrainCoinsStore = defineStore('purchaseBrainCoins', () => {
+  const paymentType = ref('MBWAY'); // Default value to avoid empty state issues
+  const reference = ref('');
+  const value = ref(1); // Default to avoid null issues
+  const errorMessage = ref('');
+  const successMessage = ref('');
 
-  actions: {
-    async purchaseBrainCoins() {
-      this.errorMessage = '';
-      this.successMessage = '';
+  // Purchase Brain Coins
+  const purchaseBrainCoins = async () => {
+    errorMessage.value = '';
+    successMessage.value = '';
 
-      if (!this.validateInput()) return;
+    if (!validateInput()) return;
 
-      try {
-        const response = await axios.post('/purchasebraincoins', {
-          type: this.paymentType,
-          reference: this.reference,
-          value: this.value,
-        });
+    try {
+      const response = await axios.post('/purchasebraincoins', {
+        type: paymentType.value,
+        reference: reference.value,
+        value: value.value,
+      });
 
-        if (response.status === 200) {
-          this.successMessage = response.data.message;
-          const authStore = useAuthStore();
-          authStore.updateBalance(response.data.brain_coins_balance);
+      if (response.status === 200) {
+        successMessage.value = response.data.message;
+        const authStore = useAuthStore();
+        authStore.updateBalance(response.data.brain_coins_balance);
 
-          // Reset input fields after success
-          this.paymentType = 'MBWAY';
-          this.reference = '';
-          this.value = 1;
-        }
-      } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'An error occurred.';
+        // Reset input fields after success
+        paymentType.value = 'MBWAY';
+        reference.value = '';
+        value.value = 1;
       }
-    },
-
-    validateInput() {
-      if (!this.value || this.value <= 0 || this.value > 99) {
-        this.errorMessage = 'Value must be between 1 and 99.';
-        return false;
-      }
-
-      if (!this.validateReference()) {
-        return false;
-      }
-
-      return true;
-    },
-
-    validateReference() {
-      if (this.paymentType === 'MBWAY' && !/^9\d{8}$/.test(this.reference)) {
-        this.errorMessage = 'Invalid MBWAY reference.';
-        return false;
-      }
-      if (this.paymentType === 'PAYPAL' && !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(this.reference)) {
-        this.errorMessage = 'Invalid PayPal email.';
-        return false;
-      }
-      if (this.paymentType === 'IBAN' && !/^[A-Za-z]{2}\d{23}$/.test(this.reference)) {
-        this.errorMessage = 'Invalid IBAN reference.';
-        return false;
-      }
-      if (this.paymentType === 'MB' && !/^\d{5}-\d{9}$/.test(this.reference)) {
-        this.errorMessage = 'Invalid MB reference.';
-        return false;
-      }
-      if (this.paymentType === 'VISA' && !/^4\d{15}$/.test(this.reference)) {
-        this.errorMessage = 'Invalid VISA reference.';
-        return false;
-      }
-
-      return true;
+    } catch (error) {
+      errorMessage.value = error.response?.data?.message || 'An error occurred.';
     }
-  }
+  };
+
+  // Validate input
+  const validateInput = () => {
+    if (!value.value || value.value <= 0 || value.value > 99) {
+      errorMessage.value = 'Value must be between 1 and 99.';
+      return false;
+    }
+
+    if (!validateReference()) {
+      return false;
+    }
+
+    return true;
+  };
+
+  // Validate reference
+  const validateReference = () => {
+    if (paymentType.value === 'MBWAY' && !/^9\d{8}$/.test(reference.value)) {
+      errorMessage.value = 'Invalid MBWAY reference.';
+      return false;
+    }
+    if (paymentType.value === 'PAYPAL' && !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(reference.value)) {
+      errorMessage.value = 'Invalid PayPal email.';
+      return false;
+    }
+    if (paymentType.value === 'IBAN' && !/^[A-Za-z]{2}\d{23}$/.test(reference.value)) {
+      errorMessage.value = 'Invalid IBAN reference.';
+      return false;
+    }
+    if (paymentType.value === 'MB' && !/^\d{5}-\d{9}$/.test(reference.value)) {
+      errorMessage.value = 'Invalid MB reference.';
+      return false;
+    }
+    if (paymentType.value === 'VISA' && !/^4\d{15}$/.test(reference.value)) {
+      errorMessage.value = 'Invalid VISA reference.';
+      return false;
+    }
+
+    return true;
+  };
+
+  return {
+    paymentType,
+    reference,
+    value,
+    errorMessage,
+    successMessage,
+    purchaseBrainCoins,
+    validateInput,
+    validateReference,
+  };
 });

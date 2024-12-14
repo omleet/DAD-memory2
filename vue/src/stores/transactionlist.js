@@ -1,37 +1,45 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { ref } from 'vue';
 
-export const useTransactionListStore = defineStore('transactionList', {
-  state: () => ({
-    transactions: {},
-    loading: true,
-    error: null,
-    currentPage: 1,
-  }),
+export const useTransactionListStore = defineStore('transactionList', () => {
+  const transactions = ref({});
+  const loading = ref(true);
+  const error = ref(null);
+  const currentPage = ref(1);
 
-  actions: {
-    async fetchTransactions(page = 1) {
-      this.loading = true;
-      this.error = null;
+  // Fetch Transactions
+  const fetchTransactions = async (page = 1) => {
+    loading.value = true;
+    error.value = null;
 
-      try {
-        const response = await axios.get(`/transactions?page=${page}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        this.transactions = response.data; // Assign the paginated data
-        this.currentPage = page;
-      } catch (err) {
-        this.error = 'Failed to fetch transactions. Please try again.';
-      } finally {
-        this.loading = false;
-      }
-    },
+    try {
+      const response = await axios.get(`/transactions?page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      transactions.value = response.data; // Assign the paginated data
+      currentPage.value = page;
+    } catch (err) {
+      error.value = 'Failed to fetch transactions. Please try again.';
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    formatDate(datetime) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Date(datetime).toLocaleDateString(undefined, options);
-    },
-  },
+  // Format Date
+  const formatDate = (datetime) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(datetime).toLocaleDateString(undefined, options);
+  };
+
+  return {
+    transactions,
+    loading,
+    error,
+    currentPage,
+    fetchTransactions,
+    formatDate,
+  };
 });

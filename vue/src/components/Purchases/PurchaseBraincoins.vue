@@ -29,21 +29,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { usePurchaseBrainCoinsStore } from '@/stores/purchaseBrainCoins';
 
-export default {
-  setup() {
-    const purchaseStore = usePurchaseBrainCoinsStore();
+const purchaseStore = usePurchaseBrainCoinsStore();
 
-    const handlePurchase = () => {
-      purchaseStore.purchaseBrainCoins();
-    };
-
-    return {
-      purchaseStore,
-      handlePurchase,
-    };
-  }
+// Function to handle the purchase
+const handlePurchase = () => {
+  purchaseStore.purchaseBrainCoins();
 };
 </script>
