@@ -19,6 +19,10 @@ import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
 import TransactionListUser from '@/components/Transactions/TransactionListUser.vue'
 import GameHistory from '@/components/GameHistory/GameHistory.vue'
+import AdminTab from '@/components/Admin/AdminTab.vue'
+import CreateAccountAdmin from '@/components/Admin/CreateAccountAdmin.vue'
+import UserLists from '@/components/Admin/UserLists.vue'
+
 
 
 const router = createRouter({
@@ -120,7 +124,21 @@ const router = createRouter({
       name: 'gamehistory',
       component: GameHistory,
     },
-
+    {
+      path: '/admintab',
+      name: 'admintab',
+      component: AdminTab,
+    },
+    {
+      path: '/createaccountadmin',
+      name: 'createaccountadmin',
+      component: CreateAccountAdmin,
+    },
+    {
+      path: '/userlists',
+      name: 'userlists',
+      component: UserLists,
+    },
     
     
   ]
@@ -135,8 +153,14 @@ router.beforeEach(async (to, from, next) => {
       await storeAuth.restoreToken()
   }
 
-  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit") && (!storeAuth.user)) {
+  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" 
+    | to.name == "gamehistory" | to.name == "transactions" | to.name == "purchasebraincoins") && (!storeAuth.user)) {
     next({ name: 'loginform' })
+    return
+  }
+
+  if ((to.name == "admintab" | to.name == "createaccountadmin" | to.name == "userlists") && (!storeAuth.isAdministrator())) {
+    next({ name: 'home' })
     return
   }
 

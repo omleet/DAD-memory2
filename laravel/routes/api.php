@@ -8,6 +8,7 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
 use App\Http\Controllers\api\TransactionsController;
 use App\Http\Controllers\api\GameHistoryController;
+use App\Models\User;
 
 
 
@@ -19,9 +20,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/auth/validatepassword', [AuthController::class, 'validatepassword']);
 
     Route::post('/purchasebraincoins', [BrainCoinsController::class, 'purchaseBrainCoins']);
-    Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);// New route
+    Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);
     Route::get('/transactions', [TransactionsController::class, 'showTransactions']);
     Route::get('/gamehistory', [GameHistoryController::class, 'showGameHistory']);
+
+    Route::get('/users', [UserController::class, 'index'])->can('viewAny', User::class); //rota para o admin ver todos os users
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
 
@@ -42,3 +45,5 @@ Route::get('/leaderboard-multiplayer-efficient-players', [LeaderBoardsController
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::delete('/users/{user}', [UserController::class, 'delete']);
 Route::post('/users', [UserController::class, 'register']);
+Route::post('users/{user}/block', [UserController::class, 'block']);
+Route::get('/users/{user}', [UserController::class, 'show']);
