@@ -120,9 +120,9 @@ const router = createRouter({
       component: TransactionListUser,
     },
     {
-      path: '/gamehistory',
-      name: 'gamehistory',
-      component: GameHistory,
+      path: '/privateleaderboard',
+      name: 'privateleaderboard',
+      component: PrivateLeaderboard,
     },
     {
       path: '/admintab',
@@ -153,14 +153,8 @@ router.beforeEach(async (to, from, next) => {
       await storeAuth.restoreToken()
   }
 
-  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" 
-    | to.name == "gamehistory" | to.name == "transactions" | to.name == "purchasebraincoins") && (!storeAuth.user)) {
+  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit") && (!storeAuth.user)) {
     next({ name: 'loginform' })
-    return
-  }
-
-  if ((to.name == "admintab" | to.name == "createaccountadmin" | to.name == "userlists") && (!storeAuth.isAdministrator())) {
-    next({ name: 'home' })
     return
   }
 
