@@ -22,6 +22,7 @@ import GameHistory from '@/components/GameHistory/GameHistory.vue'
 import AdminTab from '@/components/Admin/AdminTab.vue'
 import CreateAccountAdmin from '@/components/Admin/CreateAccountAdmin.vue'
 import UserLists from '@/components/Admin/UserLists.vue'
+import PrivateLeaderBoard from '@/components/Boards/PrivateLeaderBoard.vue'
 
 
 
@@ -120,9 +121,9 @@ const router = createRouter({
       component: TransactionListUser,
     },
     {
-      path: '/privateleaderboard',
-      name: 'privateleaderboard',
-      component: PrivateLeaderboard,
+      path: '/gamehistory',
+      name: 'gamehistory',
+      component: GameHistory,
     },
     {
       path: '/admintab',
@@ -139,7 +140,11 @@ const router = createRouter({
       name: 'userlists',
       component: UserLists,
     },
-    
+    {
+      path: '/privateleaderboard',
+      name: 'privateleaderboard',
+      component: PrivateLeaderBoard,
+    },
     
   ]
 })
@@ -158,8 +163,12 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  
- 
+  if ((to.name == "admintab" | to.name == "createaccountadmin" | to.name == "userlists") && (!storeAuth.isAdministrator())) {
+    next({ name: 'home' })
+    return
+  }
+
+
   next()
 })
 
