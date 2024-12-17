@@ -10,10 +10,20 @@ export const usePurchaseBrainCoinsStore = defineStore('purchaseBrainCoins', () =
   const errorMessage = ref('');
   const successMessage = ref('');
 
+  
   // Purchase Brain Coins
   const purchaseBrainCoins = async () => {
     errorMessage.value = '';
     successMessage.value = '';
+    const authStore = useAuthStore(); 
+    const userType = authStore.userType;  // Access userType from the store instance
+
+    // Check if the user is an admin (type 'A')
+    if (userType === 'A') {
+      errorMessage.value = 'Administrators cannot purchase coins.';
+      console.log(userType); // This should now log correctly
+      return;
+    }
 
     if (!validateInput()) return;
 
