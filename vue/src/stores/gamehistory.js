@@ -28,6 +28,17 @@ export const useGameHistoryStore = defineStore('gameHistory', () => {
     }
   };
 
+  const getStatusText = (status) => {
+    const statusMap = {
+      PE: 'Pending',
+      PL: 'In Progress',
+      E: 'Ended',
+      I: 'Interrupted',
+    };
+    return statusMap[status] || 'Unknown';
+  };
+  
+
   // Format Date
   const formatDate = (datetime) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -49,5 +60,6 @@ export const useGameHistoryStore = defineStore('gameHistory', () => {
     fetchGames,
     formatDate,
     formatTotalTime,
+    getStatusText,
   };
 });

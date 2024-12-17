@@ -8,7 +8,7 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
 use App\Http\Controllers\api\TransactionsController;
 use App\Http\Controllers\api\GameHistoryController;
-
+use App\Http\Controllers\api\GameController;
 
 
 //Auth API
@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);// New route
     Route::get('/transactions', [TransactionsController::class, 'showTransactions']);
     Route::get('/gamehistory', [GameHistoryController::class, 'showGameHistory']);
+    Route::post('/game/store', [GameController::class, 'storeGame']);
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
 
