@@ -72,13 +72,51 @@
               Transactions
             </RouterLink>
 
+
+            <div class="relative group">
+              <button
+                class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
+                type="button">
+
+                Statistics
+              </button>
+              <!-- Dropdown menu -->
+              <div
+                class="absolute left-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 mt-0 group-hover:block">
+                <ul class="py-2 text-sm text-gray-700">
+                  <li>
+                    <RouterLink to="/generalstatistics"
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      General Statistics
+                    </RouterLink>
+                  </li>
+                  <li v-if="storeAuth.user">
+                    <RouterLink to="/mystatistics"
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+
+                      My Statistics
+                    </RouterLink>
+                  </li>
+                  <li v-if="storeAuth.isAdministrator()">
+                    <RouterLink to="/adminstatistics"
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+
+                      Admin Statistics
+                    </RouterLink>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <RouterLink v-if="storeAuth.user" to="/purchasebraincoins"
-            class="text-yellow-500 hover:bg-gray-600 border border-green-500 px-6 py-2 rounded-full text-lg font-medium transition-colors">
+              class="text-yellow-500 hover:bg-gray-600 border border-green-500 px-6 py-2 rounded-full text-lg font-medium transition-colors">
               BUY BRAINCOINS
             </RouterLink>
 
+            
+
             <RouterLink v-if="storeAuth.isAdministrator()" to="admintab"
-            class="text-yellow-500 hover:bg-gray-600 border border-green-500 px-6 py-2 rounded-full text-lg font-medium transition-colors">
+              class="text-yellow-500 hover:bg-gray-600 border border-green-500 px-6 py-2 rounded-full text-lg font-medium transition-colors">
               Admin
             </RouterLink>
           </div>
@@ -156,7 +194,7 @@
     </footer>
     <AlertMessage v-if="showAlert" :message="alertMessage" :duration="10000" />
   </div>
-  
+
 </template>
 
 <script setup>
