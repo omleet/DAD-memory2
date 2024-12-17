@@ -12,6 +12,7 @@ use App\Http\Controllers\api\TransactionsController;
 use App\Http\Controllers\api\StatisticsController;
 use App\Models\User;
 
+use App\Http\Controllers\api\GameController;
 
 
 //Auth API
@@ -33,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/statistics/my', [StatisticsController::class, 'myStatistics']); //personal statistics
     Route::get('/statistics/admin', [StatisticsController::class, 'adminStatistics']); //admin statistics
+    Route::post('/game/store', [GameController::class, 'storeGame']);
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
 
