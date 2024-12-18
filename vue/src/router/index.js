@@ -178,8 +178,13 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "mystatistics" | to.name == "purchasebraincoins"
-    | to.name == "transactions" | to.name == "gamehistory"  | to.name == "purchasebraincoins") && (!storeAuth.user)) {
+    | to.name == "transactions" | to.name == "gamehistory") && (!storeAuth.user)) {
     next({ name: 'loginform' })
+    return
+  }
+
+  if ((to.name == "accountdelete" ) && (storeAuth.isAdministrator())) {
+    next({ name: 'home' })
     return
   }
 
