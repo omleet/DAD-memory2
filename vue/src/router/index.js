@@ -26,6 +26,7 @@ import PrivateLeaderBoard from '@/components/Boards/PrivateLeaderBoard.vue'
 import GeneralStatistics from '@/components/Statistics/GeneralStatistics.vue'
 import MyStatistics from '@/components/Statistics/MyStatistics.vue'
 import AdminStatistics from '@/components/Statistics/AdminStatistics.vue'
+import PrivateScoreBoard  from '@/components/Boards/PrivateScoreboard.vue'
 
 
 
@@ -162,6 +163,11 @@ const router = createRouter({
       path: '/adminstatistics',
       name: 'adminstatisticss',
       component: AdminStatistics,
+    },
+    {
+      path: '/personal-score',
+      name: '/personal-score',
+      component: PrivateScoreBoard,
     },
    
     

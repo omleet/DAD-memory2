@@ -72,76 +72,56 @@ import Card from './Card.vue';
 import { useRouter } from 'vue-router';
 import { useGameStore } from '@/stores/gameStore';
 
-
-const props = defineProps({
-  gridSize: {
-    type: Number,
-    required: true
-  }
-});
 const router = useRouter();
 const gameStore = useGameStore();
 
-const inactivityTimer = ref(0);
-const maxInactivityTime = 21;
-const inactivityWarningTime = 10;
-const isInactivityPopupVisible = ref(false);
-let inactivityInterval = null;
-
-const hasGameStarted = ref(false);
-const gameStartTime = ref(null);
-
-const timer = ref(0);
-const moves = ref(0);
-const mistakes = ref(0);
-const timerStarted = ref(false);
-let timerInterval = null;
-
-const cards = reactive([]);
-const flippedCards = reactive([]);
-
-const boardStyle = computed(() => {
-  const columns = Math.ceil(Math.sqrt(12)); 
-  return {
-    gridTemplateColumns: `repeat(${columns}, minmax(120px, 1fr))`,
-    gap: '10px',
-  };
-});
-
-const isGameComplete = computed(() => {
-  return cards.every(card => card.isMatched);
-});
+const inactivityTimer = ref(0); // Tempo atual de inatividade
+const maxInactivityTime = 21; // Tempo total para encerrar o jogo
+const inactivityWarningTime = 10; // Tempo para mostrar o aviso
+const isInactivityPopupVisible = ref(false); // Controle de visibilidade do aviso
+let inactivityInterval = null; // Intervalo para monitorar a inatividade
+const hasGameStarted = ref(false); // Indica se o jogador já começou o jogo
+const gameStartTime = ref(null); // Stores the game's start time for database submission
 
 const startInactivityTimer = () => {
   inactivityInterval = setInterval(() => {
     inactivityTimer.value += 1;
 
+    // Mostrar o aviso após 10 segundos
     if (inactivityTimer.value >= inactivityWarningTime && !isInactivityPopupVisible.value) {
-      isInactivityPopupVisible.value = true;
+      isInactivityPopupVisible.value = true; // Mostra o popup
     }
 
+    // Finalizar o jogo após 22 segundos
     if (inactivityTimer.value >= maxInactivityTime) {
-      endGame();
+      endGame(); // Finaliza o jogo
     }
   }, 1000);
 };
 
-const stopInactivityTimer = () => {
-  clearInterval(inactivityInterval);
+const resetInactivityTimer = () => {
+  inactivityTimer.value = 0; // Reseta o contador de inatividade
+  isInactivityPopupVisible.value = false; // Esconde o popup se estiver visível
 };
 
-const resetInactivityTimer = () => {
-  inactivityTimer.value = 0;
-  isInactivityPopupVisible.value = false;
+const stopInactivityTimer = () => {
+  clearInterval(inactivityInterval); // Para o intervalo de inatividade
 };
 
 const endGame = () => {
-  stopInactivityTimer();
-  stopTimer();
+  stopInactivityTimer(); // Para o timer de inatividade
+  stopTimer(); // Para o cronômetro do jogo
+
+  cards.forEach(card => {
+    card.isFlipped = false;
+    card.isMatched = false;
+  });
+
   alert("The game ended for inactivity!");
-  resetGame();
+  resetGame(); // Reinicia o jogo
 };
 
+// Database date formatter
 const formatDateForMySQL = (date) => {
   const d = new Date(date);
   const year = d.getFullYear();
@@ -152,65 +132,52 @@ const formatDateForMySQL = (date) => {
   const seconds = String(d.getSeconds()).padStart(2, '0');
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
+
+// Submits the game data to the database
 const handleGameCompletion = async () => {
   stopTimer();
   stopInactivityTimer();
 
   const gameData = {
-  winner_user_id: null, // Single-player game
-  type: 'S',
-  status: 'E',
-  began_at: formatDateForMySQL(gameStartTime.value),  // Correct format
-  ended_at: formatDateForMySQL(new Date()), // Correct format
-  total_time: timer.value,
-  board_id: 1,
-  total_turns_winner: moves.value,
-  
-  custom: JSON.stringify({ mistakes: mistakes.value, gridSize: props.gridSize }), // Correct reference
-};
+    winner_user_id: null, // Single-player game
+    type: 'S',
+    status: 'E',
+    began_at: formatDateForMySQL(gameStartTime.value), // Correct format
+    ended_at: formatDateForMySQL(new Date()), // Correct format
+    total_time: timer.value,
+    board_id: 1,
+    total_turns_winner: moves.value,
+    custom: JSON.stringify({ mistakes: mistakes.value, gridSize: props.gridSize }), // Additional data
+  };
 
   await gameStore.submitGame(gameData);
 
   if (gameStore.success) {
-    console.log(gameStore.success);
+    console.log("Game data saved successfully:", gameStore.success);
   } else if (gameStore.error) {
-    console.error(gameStore.error);
+    console.error("Error saving game data:", gameStore.error);
   }
 };
 
-const resetGame = () => {
-  resetInactivityTimer();
-  stopInactivityTimer();
-  cards.forEach(card => {
-    card.isFlipped = false;
-    card.isMatched = false;
-  });
-  moves.value = 0;
-  mistakes.value = 0;
-  timer.value = 0;
-  timerStarted.value = false;
-  hasGameStarted.value = false;
-
-  setTimeout(() => {
-    cards.splice(0, cards.length, ...generateCards(props.gridSize));  // Use gridSize from props
-  }, 700);
-
-  clearInterval(timerInterval);
-};
-
+const props = defineProps({
+  gridSize: {
+    type: Number,
+    default:12, // Tamanho padrão da grade (4x3)
+  },
+});
 
 const generateCards = (gridSize) => {
   const imagePaths = [
     '/images/1.jpg', '/images/2.jpg', '/images/3.jpg', '/images/4.jpg', '/images/5.jpg',
     '/images/6.jpg', '/images/7.jpg', '/images/8.jpg', '/images/9.jpg', '/images/10.jpg',
-    '/images/11.jpg', '/images/12.jpg', '/images/13.jpg', '/images/14.jpg', '/images/15.jpg', 
+    '/images/11.jpg', '/images/12.jpg', '/images/13.jpg', '/images/14.jpg', '/images/15.jpg',
     '/images/16.jpg', '/images/17.jpg', '/images/18.jpg', '/images/19.jpg', '/images/20.jpg',
   ];
 
   const totalCards = gridSize % 2 === 0 ? gridSize : gridSize - 1;
   const images = [...imagePaths.slice(0, totalCards / 2), ...imagePaths.slice(0, totalCards / 2)];
-  const shuffled = images.sort(() => Math.random() - 0.5);
-  
+
+  const shuffled = images.sort(() => Math.random() - 0.5); // Embaralhar as cartas
   return shuffled.map(image => ({
     image,
     isFlipped: false,
@@ -219,7 +186,38 @@ const generateCards = (gridSize) => {
   }));
 };
 
-const handleCardFlip = index => {
+const cards = reactive([]);
+const flippedCards = reactive([]);
+const timer = ref(0);
+const moves = ref(0);
+const mistakes = ref(0);
+const timerStarted = ref(false);
+let timerInterval = null;
+
+const boardStyle = computed(() => {
+  const columns = Math.ceil(Math.sqrt(props.gridSize)); // Número de colunas baseado na grade
+  return {
+    gridTemplateColumns: `repeat(${columns}, minmax(120px, 1fr))`,
+    gap: '10px',
+  };
+});
+
+const isGameComplete = computed(() => cards.every(card => card.isMatched));
+
+const shuffleCards = () => {
+  cards.forEach(card => (card.isShuffling = true));
+  setTimeout(() => {
+    const shuffled = [...generateCards(props.gridSize)];
+    cards.splice(0, cards.length, ...shuffled);
+  }, 500);
+};
+
+onMounted(() => {
+  cards.splice(0, cards.length, ...generateCards(props.gridSize));
+  shuffleCards();
+});
+
+const handleCardFlip = (index) => {
   resetInactivityTimer();
 
   if (!gameStartTime.value && hasGameStarted.value) {
@@ -263,10 +261,31 @@ const handleCardFlip = index => {
   }
 
   if (isGameComplete.value) {
-    stopTimer();
-    stopInactivityTimer();
     handleGameCompletion();
   }
+};
+
+const resetGame = () => {
+  resetInactivityTimer();
+  stopInactivityTimer();
+
+  cards.forEach(card => {
+    card.isFlipped = false;
+    card.isMatched = false;
+  });
+
+  moves.value = 0;
+  mistakes.value = 0;
+  timer.value = 0;
+  timerStarted.value = false;
+  hasGameStarted.value = false;
+
+  setTimeout(() => {
+    cards.splice(0, cards.length, ...generateCards(props.gridSize));
+    shuffleCards();
+  }, 700);
+
+  clearInterval(timerInterval);
 };
 
 const startTimer = () => {
@@ -279,12 +298,9 @@ const stopTimer = () => {
   clearInterval(timerInterval);
 };
 
-onMounted(() => {
-  cards.splice(0, cards.length, ...generateCards(props.gridSize));  // Use gridSize from props
-});
-
 onUnmounted(() => {
   stopTimer();
   stopInactivityTimer();
 });
 </script>
+

@@ -10,6 +10,8 @@ use App\Http\Controllers\api\GameHistoryController;
 use App\Http\Controllers\api\PersonalLeaderBoardsController;
 use App\Http\Controllers\api\TransactionsController;
 use App\Http\Controllers\api\StatisticsController;
+use App\Http\Controllers\api\PersonalScoreController;
+
 use App\Models\User;
 
 use App\Http\Controllers\api\GameController;
@@ -35,6 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/statistics/my', [StatisticsController::class, 'myStatistics']); //personal statistics
     Route::get('/statistics/admin', [StatisticsController::class, 'adminStatistics']); //admin statistics
     Route::post('/game/store', [GameController::class, 'storeGame']);
+    Route::get('/personal-score', [PersonalScoreController::class, 'getScoreboard']);
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
 

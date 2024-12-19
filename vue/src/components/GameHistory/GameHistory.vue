@@ -33,7 +33,7 @@
               <th class="px-4 py-2">Total Time</th>
               <th class="px-4 py-2">Turns</th>
               <th class="px-4 py-2">Winner</th>
-              <th class="px-4 py-2">Board ID</th>
+              <th class="px-4 py-2">Board Size</th>
             </tr>
           </thead>
           <tbody>
@@ -43,8 +43,8 @@
               <td class="px-4 py-2">{{ gameHistoryStore.getStatusText(game.status) }}</td>
               <td class="px-4 py-2">{{ gameHistoryStore.formatTotalTime(game.total_time) }}</td>
               <td class="px-4 py-2">{{ game.total_turns_winner ? game.total_turns_winner : '-' }}</td>
-              <td class="px-4 py-2">{{ game.winner_user_id ? game.winner_user_id : '-' }}</td>
-              <td class="px-4 py-2">{{ game.board_id || '-' }}</td>
+              <td class="px-4 py-2">{{ game.winner_nickname || '-' }}</td> <!-- Winner Nickname -->
+              <td class="px-4 py-2">{{ game.board_size || '-' }}</td> <!-- Board Size -->
             </tr>
           </tbody>
         </table>
@@ -70,7 +70,6 @@
             class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
             Next
           </button>
-
         </div>
       </div>
     </div>

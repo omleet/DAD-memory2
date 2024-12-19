@@ -12,14 +12,16 @@ export const useGameHistoryStore = defineStore('gameHistory', () => {
   const fetchGames = async (page = 1) => {
     loading.value = true;
     error.value = null;
-
+  
     try {
       const response = await axios.get(`/gamehistory?page=${page}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      games.value = response.data; // Assign the paginated data
+  
+      // Ensure the games include board_size and winner_nickname
+      games.value = response.data;
       currentPage.value = page;
     } catch (err) {
       error.value = 'Failed to fetch game history. Please try again.';
