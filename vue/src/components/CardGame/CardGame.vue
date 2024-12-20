@@ -141,7 +141,7 @@ const getBoardIdBySize = (gridSize) => {
       } else if (gridSize === 16) {
         return 2;  // Example board_id for 16x16 grid
       }else if (gridSize === 36){
-      return 0; 
+      return 3; 
       } // Default fallback
     };
 
