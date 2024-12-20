@@ -374,6 +374,9 @@ const resetGame = () => {
   timerStarted.value = false;
   hasGameStarted.value = false;
 
+  gameStartTime.value = null;
+  gameStartTimeMs = 0;
+
   setTimeout(() => {
     cards.splice(0, cards.length, ...generateCards(props.gridSize));
     shuffleCards();

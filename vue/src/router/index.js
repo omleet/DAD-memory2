@@ -202,8 +202,8 @@ router.beforeEach(async (to, from, next) => {
   }
   
   if (['cardgame4x4', 'cardgame6x6'].includes(to.name)) {
-    const userBalance = storeAuth.user?.brain_coins_balance|| 0; 
-    if (userBalance < 1) {
+    const userBalance = storeAuth.user?.brain_coins_balance || 0; 
+    if (userBalance < 0) {
       next({ name: 'singleplayer' })
       return ; 
     }
