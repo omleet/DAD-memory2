@@ -26,7 +26,7 @@ import GeneralStatistics from '@/components/Statistics/GeneralStatistics.vue'
 import MyStatistics from '@/components/Statistics/MyStatistics.vue'
 import AdminStatistics from '@/components/Statistics/AdminStatistics.vue'
 import PrivateScoreBoard  from '@/components/Boards/PrivateScoreboard.vue'
-
+import UnavailablePage from '@/components/Unavailable/UnavailablePage.vue'
 
 
 const router = createRouter({
@@ -164,6 +164,11 @@ const router = createRouter({
       name: 'personal-score',
       component: PrivateScoreBoard,
     },
+    {
+      path: '/unavailablepage',
+      name: 'unavailablepage',
+      component: UnavailablePage,
+    },
    
     
   ]
@@ -180,7 +185,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "mystatistics" | to.name == "purchasebraincoins"
-    | to.name == "transactions" | to.name == "gamehistory" | to.name=="personal-score") && (!storeAuth.user)) {
+    | to.name == "transactions" | to.name == "gamehistory" | to.name=="personal-score" | to.name=="unavailablepage") && (!storeAuth.user)) {
     next({ name: 'loginform' })
     return
   }
@@ -197,7 +202,7 @@ router.beforeEach(async (to, from, next) => {
   
   if (['cardgame4x4', 'cardgame6x6'].includes(to.name)) {
     const userBalance = storeAuth.user?.brain_coins_balance|| 0; 
-    if (userBalance < 1) {
+    if (userBalance < 1 ) {
       
       next({ name: 'singleplayer' })
       return ; 

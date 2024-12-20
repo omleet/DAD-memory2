@@ -61,7 +61,23 @@
             </RouterLink>
           </div>
         </div>
+   
+
+       <!-- Statistics -->
+       <div class="mt-12">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">Statistics</h3>
+          <p class="text-gray-600 mb-6">Analyze the general gameplay data!</p>
+          <RouterLink
+            class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+            to="/generalstatistics"
+          >
+            View General Statistics
+          </RouterLink>
+        </div>
       </div>
+    </div>
+      
   
       <!-- Componente de alerta -->
       <AlertMessage v-if="alertVisible" message="Alert! Please Log in/Register to proceed." />
