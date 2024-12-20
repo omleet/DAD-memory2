@@ -24,9 +24,6 @@
               to="/cardgame">
               Game 4x3
             </RouterLink>
-            <!-- <button @click="handleGameModeClick('/cardgame4x4')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">
-              Game 4x4
-            </button> -->
             <button @click="handleGameModeClick('/cardgame4x4')"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">
               Game 4x4
