@@ -147,6 +147,10 @@ const confirmPlayAgain = async () => {
   }
 };
 
+const cancelPlayAgain = async () => {
+router.push('/singleplayer');
+};
+
 
 
 const startInactivityTimer = () => {
@@ -387,6 +391,8 @@ const startTimer = () => {
 const stopTimer = () => {
   clearInterval(timerInterval);
 };
+
+
 
 onUnmounted(() => {
   stopTimer();
