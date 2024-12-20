@@ -288,7 +288,7 @@ let timerInterval = null;
 const boardStyle = computed(() => {
   const columns = Math.ceil(Math.sqrt(props.gridSize)); // Número de colunas baseado na grade
   return {
-    gridTemplateColumns: `repeat(${columns}, minmax(120px, 1fr))`,
+    gridTemplateColumns: `repeat(${columns}, minmax(10px, 1fr))`,
     gap: '10px',
   };
 });

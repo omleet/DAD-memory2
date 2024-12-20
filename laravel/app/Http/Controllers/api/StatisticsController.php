@@ -155,7 +155,8 @@ class StatisticsController extends Controller
             ->get();
 
         // Carregar usuário que mais gastou com o relacionamento "user" e total de euros gastos
-        $userMostMoneySpent = User::where('id', $userSpentMost->user_id)->first();
+        //$userMostMoneySpent = User::where('id', $userSpentMost->user_id)->first();
+        $userMostMoneySpent = DB::table('users')->select('nickname')->where('id', $userSpentMost->user_id)->first();
 
         // Preparando a resposta
         $stats = [

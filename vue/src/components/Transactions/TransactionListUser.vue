@@ -23,48 +23,52 @@
 
       <!-- Transactions Table -->
       <div v-else>
-        <table v-if="transactionStore.transactions.data?.length > 0" class="transaction-table w-full table-auto text-gray-700 mb-8">
-          <thead>
-            <tr class="text-left text-sm font-semibold text-gray-800 border-b">
-              <th class="px-4 py-2">Date</th>
-              <th class="px-4 py-2">Type</th>
-              <th class="px-4 py-2">Brain Coins</th>
-              <th class="px-4 py-2">Euros</th>
-              <th class="px-4 py-2">Payment Type</th>
-              <th class="px-4 py-2">Payment Reference</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="transaction in transactionStore.transactions.data" :key="transaction.id" class="border-b hover:bg-gray-50">
-              <td class="px-4 py-2">{{ transactionStore.formatDate(transaction.transaction_datetime) }}</td>
-              <td class="px-4 py-2">{{ transactionStore.getTransactionTypeText(transaction.type) }}</td>
-              <td class="px-4 py-2">{{ transaction.brain_coins }}</td>
-              <td class="px-4 py-2">{{ transaction.euros || '-' }}</td>
-              <td class="px-4 py-2">{{ transaction.payment_type || '-' }}</td>
-              <td class="px-4 py-2">{{ transaction.payment_reference || '-' }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <div v-if="transactionStore.transactions.data?.length > 0">
+            <table class="min-w-full bg-white border-collapse border border-gray-200">
+              <thead>
+                <tr class="text-left text-sm font-semibold text-gray-800 border-b bg-gray-100">
+                  <th class="px-4 py-2 border-r">Date</th>
+                  <th class="px-4 py-2 border-r">Type</th>
+                  <th class="px-4 py-2 border-r">Brain Coins</th>
+                  <th class="px-4 py-2 border-r">Euros</th>
+                  <th class="px-4 py-2 border-r">Payment Type</th>
+                  <th class="px-4 py-2">Payment Reference</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="transaction in transactionStore.transactions.data" :key="transaction.id" class="border-b hover:bg-gray-50">
+                  <td class="px-4 py-2 border-r">{{ transactionStore.formatDate(transaction.transaction_datetime) }}</td>
+                  <td class="px-4 py-2 border-r">{{ transactionStore.getTransactionTypeText(transaction.type) }}</td>
+                  <td class="px-4 py-2 border-r">{{ transaction.brain_coins }}</td>
+                  <td class="px-4 py-2 border-r">{{ transaction.euros || '-' }}</td>
+                  <td class="px-4 py-2 border-r">{{ transaction.payment_type || '-' }}</td>
+                  <td class="px-4 py-2">{{ transaction.payment_reference || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <!-- No Transactions Found -->
-        <div v-else class="text-center text-gray-600">
-          <p>No transactions found.</p>
+          <!-- No Transactions Found -->
+          <div v-else class="text-center text-gray-600">
+            <p>No transactions found.</p>
+          </div>
         </div>
+      </div>
 
-        <!-- Pagination Controls -->
-        <div v-if="transactionStore.transactions.total > transactionStore.transactions.per_page" class="flex justify-between items-center mt-4">
-          <button @click="changePage(transactionStore.currentPage - 1)" :disabled="transactionStore.currentPage === 1"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
-            Previous
-          </button>
-          <span class="text-gray-600">
-            Page {{ transactionStore.currentPage }} of {{ transactionStore.transactions.last_page }}
-          </span>
-          <button @click="changePage(transactionStore.currentPage + 1)" :disabled="transactionStore.currentPage === transactionStore.transactions.last_page"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
-            Next
-          </button>
-        </div>
+      <!-- Pagination Controls -->
+      <div v-if="transactionStore.transactions.total > transactionStore.transactions.per_page" class="flex justify-between items-center mt-4">
+        <button @click="changePage(transactionStore.currentPage - 1)" :disabled="transactionStore.currentPage === 1"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+          Previous
+        </button>
+        <span class="text-gray-600">
+          Page {{ transactionStore.currentPage }} of {{ transactionStore.transactions.last_page }}
+        </span>
+        <button @click="changePage(transactionStore.currentPage + 1)" :disabled="transactionStore.currentPage === transactionStore.transactions.last_page"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+          Next
+        </button>
       </div>
     </div>
   </div>
@@ -86,25 +90,3 @@ const changePage = (page) => {
   transactionStore.fetchTransactions(page);
 };
 </script>
-
-
-<style scoped>
-.transaction-table {
-  border-collapse: collapse;
-}
-
-.transaction-table th,
-.transaction-table td {
-  padding: 12px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-.transaction-table th {
-  background-color: #f4f4f4;
-}
-
-.transaction-table td {
-  background-color: #ffffff;
-}
-</style>

@@ -31,9 +31,9 @@
                 <div class="flex justify-between items-center">
                     <span class="font-semibold dark:text-slate-100">User with the most money spent (€):</span>
                     <span class="text-blue-600 ">
-                        {{ stats.user_most_money_spent.user.nickname + " - (" +
-                            stats.user_most_money_spent.total_euros_spent + "€)" }}
+                        {{ stats.user_most_money_spent.user.nickname + " - (" + stats.user_most_money_spent.total_euros_spent + "€)" }}
                     </span>
+
 
 
                 </div>
@@ -46,19 +46,19 @@
                     <span class="font-semibold dark:text-slate-100">Blocked Users on the platform:</span>
                     <span class="text-red-600 ">{{ stats.total_blocks }}</span>
                 </div><br>
-                
+
 
                 <!-- Gráfico -->
                 <div class="mt-6">
-                      <RevenueByYear v-if="stats.revenue_per_year" :stats="stats.revenue_per_year" />   
+                    <RevenueByYear v-if="stats.revenue_per_year" :stats="stats.revenue_per_year" />
                 </div><br>
 
                 <div class="mt-6">
-                      <RevenueByMonth v-if="stats.revenue_per_month" :stats="stats.revenue_per_month" />   
+                    <RevenueByMonth v-if="stats.revenue_per_month" :stats="stats.revenue_per_month" />
                 </div><br>
 
                 <div class="mt-6">
-                      <TransactionsPerMonth v-if="stats.transactions_per_month" :stats="stats.transactions_per_month" />   
+                    <TransactionsPerMonth v-if="stats.transactions_per_month" :stats="stats.transactions_per_month" />
                 </div><br>
 
             </div>
@@ -88,7 +88,7 @@ const isLoading = ref(true)
 const authStore = useAuthStore()
 
 if (!authStore.isAdministrator()) {
-  router.push('/')
+    router.push('/')
 }
 
 // Requisição de dados
@@ -96,12 +96,12 @@ axios
     .get(axios.defaults.baseURL + '/statistics/admin')
     .then((response) => {
         stats.value = response.data
-          //console.log(stats.value.revenue_per_year) //ver os dados que estavam a passar
+        //console.log(stats.value.user_most_money_spent) //ver os dados que estavam a passar
         isLoading.value = false
     })
     .catch(() => {
         errorStore.setErrorMessages('Error occurred while trying to provide the admin statistics.')
-        
+
     })
 
 </script>
