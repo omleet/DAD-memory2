@@ -8,6 +8,7 @@ export const useSpGameStore = defineStore('spgame', () => {
   const alertMessage = ref('');
   const showAlert = ref(false);
   const targetRoute = ref('');
+  const canProceedToGame = ref(false);
 
   
 
@@ -35,6 +36,7 @@ export const useSpGameStore = defineStore('spgame', () => {
     try {
       const response = await axios.post('/deductbraincoins');
       if (response.status === 200) {
+        canProceedToGame.value = true;
         return response.data.brain_coins_balance; // Return the updated balance
       }
     } catch (error) {
@@ -51,6 +53,7 @@ export const useSpGameStore = defineStore('spgame', () => {
     showNotEnoughCoinsModal.value = false;
     alertMessage.value = '';
     showAlert.value = false;
+    canProceedToGame.value = false;
   };
   
 
@@ -67,6 +70,7 @@ export const useSpGameStore = defineStore('spgame', () => {
     alertMessage,
     showAlert,
     targetRoute,
+    canProceedToGame,
     handleGameModeClick,
     useBrainCoin,
     cancelGame,

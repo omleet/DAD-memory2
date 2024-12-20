@@ -78,7 +78,7 @@
 
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted , onBeforeUnmount} from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useSpGameStore } from '@/stores/spgame';
@@ -92,6 +92,10 @@ onMounted(() => {
   spGameStore.resetState(); // Reset modal states when the page is loaded
 });
 
+onBeforeUnmount(() => {
+  spGameStore.resetState(); // Reset state when the component is unmounted
+});
+
 const handleGameModeClick = (route) => {
   const isAuthenticated = !!authStore.user;
   const userBalance = authStore.balance;
@@ -103,6 +107,8 @@ const confirmUseBrainCoin = async () => {
   const newBalance = await spGameStore.useBrainCoin();
   if (newBalance !== null) {
     authStore.updateBalance(newBalance);
+    const targetRoute = spGameStore.targetRoute || '/singleplayer'; // Use fallback if targetRoute is undefined
+    router.push(targetRoute);
     router.push(spGameStore.targetRoute);
     spGameStore.showModal = false;
   }

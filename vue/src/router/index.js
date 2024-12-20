@@ -27,7 +27,7 @@ import MyStatistics from '@/components/Statistics/MyStatistics.vue'
 import AdminStatistics from '@/components/Statistics/AdminStatistics.vue'
 import PrivateScoreBoard  from '@/components/Boards/PrivateScoreboard.vue'
 import UnavailablePage from '@/components/Unavailable/UnavailablePage.vue'
-
+import { useSpGameStore } from '@/stores/spgame';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -177,6 +177,7 @@ const router = createRouter({
 let handlingFirstRoute = true
 
 router.beforeEach(async (to, from, next) => {
+  const spGameStore = useSpGameStore();
   const storeAuth = useAuthStore()
   
   if (handlingFirstRoute) {
@@ -202,9 +203,13 @@ router.beforeEach(async (to, from, next) => {
   
   if (['cardgame4x4', 'cardgame6x6'].includes(to.name)) {
     const userBalance = storeAuth.user?.brain_coins_balance|| 0; 
-    if (userBalance >= 0) {
+    if (userBalance < 1) {
       next({ name: 'singleplayer' })
       return ; 
+    }
+    if (!spGameStore.canProceedToGame) {
+      next({ name: 'singleplayer' });
+      return;
     }
   }
   next()
