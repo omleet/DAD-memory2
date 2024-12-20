@@ -18,7 +18,15 @@ import  PurchaseBraincoins from '@/components/Purchases/PurchaseBraincoins.vue'
 import ProfileEdit from '@/components/User/ProfileEdit.vue'
 import AccountDelete from '@/components/User/AccountDelete.vue'
 import TransactionListUser from '@/components/Transactions/TransactionListUser.vue'
-import PrivateLeaderboard from '@/components/Boards/PrivateLeaderBoard.vue'
+import GameHistory from '@/components/GameHistory/GameHistory.vue'
+import AdminTab from '@/components/Admin/AdminTab.vue'
+import CreateAccountAdmin from '@/components/Admin/CreateAccountAdmin.vue'
+import UserLists from '@/components/Admin/UserLists.vue'
+import GeneralStatistics from '@/components/Statistics/GeneralStatistics.vue'
+import MyStatistics from '@/components/Statistics/MyStatistics.vue'
+import AdminStatistics from '@/components/Statistics/AdminStatistics.vue'
+import PrivateScoreBoard  from '@/components/Boards/PrivateScoreboard.vue'
+import UnavailablePage from '@/components/Unavailable/UnavailablePage.vue'
 
 
 const router = createRouter({
@@ -116,12 +124,52 @@ const router = createRouter({
       component: TransactionListUser,
     },
     {
-      path: '/privateleaderboard',
-      name: 'privateleaderboard',
-      component: PrivateLeaderboard,
+      path: '/gamehistory',
+      name: 'gamehistory',
+      component: GameHistory,
     },
-
+    {
+      path: '/admintab',
+      name: 'admintab',
+      component: AdminTab,
+    },
+    {
+      path: '/createaccountadmin',
+      name: 'createaccountadmin',
+      component: CreateAccountAdmin,
+    },
+    {
+      path: '/userlists',
+      name: 'userlists',
+      component: UserLists,
+    },
     
+    {
+      path: '/generalstatistics',
+      name: 'generalstatistics',
+      component: GeneralStatistics,
+    },
+    {
+      path: '/mystatistics',
+      name: 'mystatistics',
+      component: MyStatistics,
+    },
+    {
+      path: '/adminstatistics',
+      name: 'adminstatisticss',
+      component: AdminStatistics,
+    },
+    {
+      path: '/personal-score',
+      name: 'personal-score',
+      component: PrivateScoreBoard,
+    },
+    {
+      path: '/unavailablepage',
+      name: 'unavailablepage',
+      component: UnavailablePage,
+    },
+   
     
   ]
 })
@@ -130,16 +178,37 @@ let handlingFirstRoute = true
 
 router.beforeEach(async (to, from, next) => {
   const storeAuth = useAuthStore()
+  
   if (handlingFirstRoute) {
       handlingFirstRoute = false
       await storeAuth.restoreToken()
   }
 
-  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "privateleaderboard"  ) && (!storeAuth.user)) {
+  if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "mystatistics" | to.name == "purchasebraincoins"
+    | to.name == "transactions" | to.name == "gamehistory" | to.name=="personal-score" | to.name == "unavailablepage") && (!storeAuth.user)) {
     next({ name: 'loginform' })
     return
   }
+
+  if ((to.name == "accountdelete" ) && (storeAuth.isAdministrator())) {
+    next({ name: 'home' })
+    return
+  }
+
+  if ((to.name == "admintab" | to.name == "createaccountadmin" | to.name == "userlists" | to.name == "adminstatistics") && (!storeAuth.isAdministrator())) {
+    next({ name: 'home' })
+    return
+  }
+  
+  if (['cardgame4x4', 'cardgame6x6'].includes(to.name)) {
+    const userBalance = storeAuth.user?.brain_coins_balance|| 0; 
+    if (userBalance >= 0) {
+      next({ name: 'singleplayer' })
+      return ; 
+    }
+  }
   next()
+  
 })
 
 

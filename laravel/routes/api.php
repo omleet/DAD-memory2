@@ -8,8 +8,13 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BrainCoinsController;
 use App\Http\Controllers\api\GameHistoryController;
 use App\Http\Controllers\api\PersonalLeaderBoardsController;
+use App\Http\Controllers\api\TransactionsController;
+use App\Http\Controllers\api\StatisticsController;
+use App\Http\Controllers\api\PersonalScoreController;
 
+use App\Models\User;
 
+use App\Http\Controllers\api\GameController;
 
 
 //Auth API
@@ -23,14 +28,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/scoreboards/multiplayer/personal/{filter}', [PersonalLeaderBoardsController::class, 'MultiplayerPersonal']);
 
     Route::post('/purchasebraincoins', [BrainCoinsController::class, 'purchaseBrainCoins']);
-    Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);// New route
+    Route::post('/deductbraincoins', [BrainCoinsController::class, 'deductBrainCoin']);
     Route::get('/transactions', [TransactionsController::class, 'showTransactions']);
     Route::get('/gamehistory', [GameHistoryController::class, 'showGameHistory']);
+
+    Route::get('/users', [UserController::class, 'index'])->can('viewAny', User::class); //rota para o admin ver todos os users
+
+    Route::get('/statistics/my', [StatisticsController::class, 'myStatistics']); //personal statistics
+    Route::get('/statistics/admin', [StatisticsController::class, 'adminStatistics']); //admin statistics
+    Route::post('/game/store', [GameController::class, 'storeGame']);
+    Route::get('/personal-score', [PersonalScoreController::class, 'getScoreboard']);
+
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
-
-
-
 
 
 //Public Leaderboards
@@ -41,8 +51,12 @@ Route::get('/leaderboard-multiplayer-mostgames-won', [LeaderBoardsController::cl
 Route::get('/leaderboard-multiplayer-efficient-players', [LeaderBoardsController::class, 'mostEfficientPlayers']);
 
 
-
 //Users
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::delete('/users/{user}', [UserController::class, 'delete']);
 Route::post('/users', [UserController::class, 'register']);
+Route::post('users/{user}/block', [UserController::class, 'block']);
+Route::get('/users/{user}', [UserController::class, 'show']);
+
+//General Stats
+Route::get('/statistics', [StatisticsController::class, 'GeneralStatistics']);

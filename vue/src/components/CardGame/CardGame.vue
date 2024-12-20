@@ -21,7 +21,6 @@
       </span>
     </div>
 
-
     <div class="grid gap-4 mb-8" :style="boardStyle">
       <Card v-for="(card, index) in cards" :key="index" :card="card" :class="{ matched: card.isMatched }"
         :is-flipped="card.isFlipped || card.isMatched" @flip="handleCardFlip(index)" />
@@ -64,15 +63,17 @@
         </button>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import Card from './Card.vue';
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter } from 'vue-router';
+import { useGameStore } from '@/stores/gameStore';
+
+const router = useRouter();
+const gameStore = useGameStore();
 
 const inactivityTimer = ref(0); // Tempo atual de inatividade
 const maxInactivityTime = 21; // Tempo total para encerrar o jogo
@@ -80,7 +81,8 @@ const inactivityWarningTime = 10; // Tempo para mostrar o aviso
 const isInactivityPopupVisible = ref(false); // Controle de visibilidade do aviso
 let inactivityInterval = null; // Intervalo para monitorar a inatividade
 const hasGameStarted = ref(false); // Indica se o jogador já começou o jogo
-
+const gameStartTime = ref(null); // Stores the game's start time for database submission
+let gameStartTimeMs = 0; 
 
 const startInactivityTimer = () => {
   inactivityInterval = setInterval(() => {
@@ -107,7 +109,6 @@ const stopInactivityTimer = () => {
   clearInterval(inactivityInterval); // Para o intervalo de inatividade
 };
 
-
 const endGame = () => {
   stopInactivityTimer(); // Para o timer de inatividade
   stopTimer(); // Para o cronômetro do jogo
@@ -119,60 +120,93 @@ const endGame = () => {
 
   alert("The game ended for inactivity!");
   resetGame(); // Reinicia o jogo
-  
 };
 
+// Database date formatter
+const formatDateForMySQL = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+  const milliseconds = String(d.getMilliseconds()).padStart(2, '0'); // Get milliseconds and pad it to 3 digits
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`; // Include milliseconds
+};
 
+const getBoardIdBySize = (gridSize) => {
+      if (gridSize === 12) {
+        return 1;  // Example board_id for 12x12 grid
+      } else if (gridSize === 16) {
+        return 2;  // Example board_id for 16x16 grid
+      }else if (gridSize === 36){
+      return 3; 
+      } // Default fallback
+    };
+
+// Submits the game data to the database
+const handleGameCompletion = async () => {
+  stopTimer();
+  stopInactivityTimer();
+  const gameEndTimeMs = Date.now(); // Get the end time in milliseconds
+  const totalTimeInMilliseconds = gameEndTimeMs - gameStartTimeMs;
+  const totalTimeInSeconds = (totalTimeInMilliseconds / 1000).toFixed(2);
+
+  const boardId = getBoardIdBySize(props.gridSize);
+  
+ 
+
+  const gameData = {
+    winner_user_id: null, // Single-player game
+    type: 'S',
+    status: 'E',
+    began_at: formatDateForMySQL(gameStartTime.value), // Correct format
+    ended_at: formatDateForMySQL(new Date()), // Correct format
+    total_time: totalTimeInSeconds,
+    board_id: boardId,
+    total_turns_winner: moves.value,
+    custom: JSON.stringify({ mistakes: mistakes.value, gridSize: props.gridSize }), // Additional data
+  };
+
+
+  
+
+  await gameStore.submitGame(gameData);
+
+  if (gameStore.success) {
+    console.log("Game data saved successfully:", gameStore.success);
+  } else if (gameStore.error) {
+    console.error("Error saving game data:", gameStore.error);
+  }
+};
 
 const props = defineProps({
   gridSize: {
     type: Number,
-    default: 12, // Tamanho padrão da grade (4x3)
+    default:12, // Tamanho padrão da grade (4x3)
   },
 });
 
-
-
 const generateCards = (gridSize) => {
-  // Número de cartas deve ser `gridSize / 2` porque estamos criando pares de cartas
   const imagePaths = [
-    '/images/1.jpg',
-    '/images/2.jpg',
-    '/images/3.jpg',
-    '/images/4.jpg',
-    '/images/5.jpg',
-    '/images/6.jpg',
-    '/images/7.jpg',
-    '/images/8.jpg',
-    '/images/9.jpg',
-    '/images/10.jpg',
-    '/images/11.jpg',
-    '/images/12.jpg',
-    '/images/13.jpg',
-    '/images/14.jpg',
-    '/images/15.jpg',
-    '/images/16.jpg',
-    '/images/17.jpg',
-    '/images/18.jpg',
-    '/images/19.jpg',
-    '/images/20.jpg',
-
-    // Adicione mais imagens conforme necessário
+    '/images/1.jpg', '/images/2.jpg', '/images/3.jpg', '/images/4.jpg', '/images/5.jpg',
+    '/images/6.jpg', '/images/7.jpg', '/images/8.jpg', '/images/9.jpg', '/images/10.jpg',
+    '/images/11.jpg', '/images/12.jpg', '/images/13.jpg', '/images/14.jpg', '/images/15.jpg',
+    '/images/16.jpg', '/images/17.jpg', '/images/18.jpg', '/images/19.jpg', '/images/20.jpg',
   ];
 
-  // Garantir que o gridSize tenha o valor adequado
-  const totalCards = gridSize % 2 === 0 ? gridSize : gridSize - 1; // Garante que o número de cartas seja par
+  const totalCards = gridSize % 2 === 0 ? gridSize : gridSize - 1;
   const images = [...imagePaths.slice(0, totalCards / 2), ...imagePaths.slice(0, totalCards / 2)];
 
   const shuffled = images.sort(() => Math.random() - 0.5); // Embaralhar as cartas
   return shuffled.map(image => ({
-    image,  // Agora cada carta tem uma imagem
+    image,
     isFlipped: false,
     isMatched: false,
     className: 'rounded-card',
   }));
 };
-
 
 const cards = reactive([]);
 const flippedCards = reactive([]);
@@ -185,16 +219,13 @@ let timerInterval = null;
 const boardStyle = computed(() => {
   const columns = Math.ceil(Math.sqrt(props.gridSize)); // Número de colunas baseado na grade
   return {
-    gridTemplateColumns: `repeat(${columns}, minmax(120px, 1fr))`, // Tamanho mínimo de 120px por carta
+    gridTemplateColumns: `repeat(${columns}, minmax(120px, 1fr))`,
     gap: '10px',
   };
 });
 
-const isGameComplete = computed(() => {
-  return cards.every(card => card.isMatched);
-});
+const isGameComplete = computed(() => cards.every(card => card.isMatched));
 
-// Função que embaralha as cartas
 const shuffleCards = () => {
   cards.forEach(card => (card.isShuffling = true));
   setTimeout(() => {
@@ -204,30 +235,34 @@ const shuffleCards = () => {
 };
 
 onMounted(() => {
-  cards.splice(0, cards.length, ...generateCards(props.gridSize)); // Gera as cartas
-  shuffleCards(); // Embaralha as cartas após a geração
+  cards.splice(0, cards.length, ...generateCards(props.gridSize));
+  shuffleCards();
 });
 
+const handleCardFlip = (index) => {
+  resetInactivityTimer();
 
+  if (!gameStartTime.value && hasGameStarted.value) {
+    gameStartTime.value = new Date().toISOString();
+    gameStartTimeMs = Date.now();
+  
 
-const handleCardFlip = index => {
-  resetInactivityTimer(); // Reseta o cronómetro de inatividade
-
-  const card = cards[index];
-  if (card.isFlipped || card.isMatched || flippedCards.length === 2) return; // Evita virar cartas inválidas
-
-  // Inicia o cronómetro de inatividade na primeira jogada
-  if (!hasGameStarted.value) {
-    hasGameStarted.value = true;
-    startInactivityTimer(); // Agora o cronómetro de inatividade só começa aqui
   }
 
-  card.isFlipped = true; // Vira a carta
-  flippedCards.push(index); // Adiciona o índice da carta à lista das cartas viradas
+  const card = cards[index];
+  if (card.isFlipped || card.isMatched || flippedCards.length === 2) return;
+
+  if (!hasGameStarted.value) {
+    hasGameStarted.value = true;
+    startInactivityTimer();
+  }
+
+  card.isFlipped = true;
+  flippedCards.push(index);
 
   if (!timerStarted.value) {
     timerStarted.value = true;
-    startTimer(); // Inicia o cronómetro do jogo
+    startTimer();
   }
 
   if (flippedCards.length === 2) {
@@ -239,29 +274,25 @@ const handleCardFlip = index => {
     if (firstCard.image === secondCard.image) {
       firstCard.isMatched = true;
       secondCard.isMatched = true;
-      flippedCards.length = 0; // Limpa as cartas viradas
+      flippedCards.length = 0;
     } else {
       mistakes.value += 1;
       setTimeout(() => {
         firstCard.isFlipped = false;
         secondCard.isFlipped = false;
-        flippedCards.length = 0; // Limpa as cartas viradas
-      }, 1000); // Espera 1 segundo antes de virar as cartas novamente
+        flippedCards.length = 0;
+      }, 1000);
     }
   }
 
   if (isGameComplete.value) {
-    stopTimer();
-    stopInactivityTimer(); // Para o cronómetro de inatividade ao finalizar o jogo
+    handleGameCompletion();
   }
 };
 
-
-
-
 const resetGame = () => {
-  resetInactivityTimer(); // Reseta o cronómetro de inatividade
-  stopInactivityTimer(); // Certifica-se de que o cronómetro esteja parado
+  resetInactivityTimer();
+  stopInactivityTimer();
 
   cards.forEach(card => {
     card.isFlipped = false;
@@ -272,18 +303,15 @@ const resetGame = () => {
   mistakes.value = 0;
   timer.value = 0;
   timerStarted.value = false;
-  hasGameStarted.value = false; // Marca que o jogo ainda não começou
+  hasGameStarted.value = false;
 
   setTimeout(() => {
     cards.splice(0, cards.length, ...generateCards(props.gridSize));
-    shuffleCards(); // Embaralha as cartas após a regeneração
+    shuffleCards();
   }, 700);
 
   clearInterval(timerInterval);
 };
-
-
-
 
 const startTimer = () => {
   timerInterval = setInterval(() => {
@@ -296,17 +324,8 @@ const stopTimer = () => {
 };
 
 onUnmounted(() => {
-  clearInterval(timerInterval);
+  stopTimer();
   stopInactivityTimer();
 });
-
 </script>
 
-
-<style scoped>
-.grid {
-  display: grid;
-  justify-items: center;
-  align-items: center;
-}
-</style>

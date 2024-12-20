@@ -20,12 +20,17 @@ class UserController extends Controller
     {
         $query = User::query();
 
+        if ($request->has('type')) {
+            $userType = $request->input('type');
+            $query->where('type', $userType);
+        }
+
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', $search . '%');
         }
 
-        $users = $query->paginate(10);
+        $users = $query->paginate(12);
 
         return UserResource::collection($users);
     }
@@ -40,6 +45,14 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    public function block(User $user)
+    {
+        //$user = User::find($id);
+        $user->blocked = !$user->blocked;
+        $user->save();
+
+        return new UserResource($user);
+    }
 
     public function update(UpdateUserRequest $request, User $user)
     {

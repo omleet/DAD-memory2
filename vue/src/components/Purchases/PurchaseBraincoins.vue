@@ -36,6 +36,7 @@ const purchaseStore = usePurchaseBrainCoinsStore();
 
 // Function to handle the purchaseaaa
 const handlePurchase = () => {
+  
   purchaseStore.purchaseBrainCoins();
 };
 </script>

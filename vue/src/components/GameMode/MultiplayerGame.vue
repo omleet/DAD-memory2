@@ -27,17 +27,17 @@
                         <!-- Botões para os modos de jogo -->
                         <RouterLink
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
-                            to="#">
+                            to="/unavailablepage">
                             Game 4x3
                         </RouterLink>
                         <RouterLink
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
-                            to="#">
+                            to="/unavailablepage">
                             Game 4x4
                         </RouterLink>
                         <RouterLink
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
-                            to="#">
+                            to="/unavailablepage">
                             Game 6x6
                         </RouterLink>
                     </div>
