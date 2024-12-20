@@ -82,6 +82,7 @@ const isInactivityPopupVisible = ref(false); // Controle de visibilidade do avis
 let inactivityInterval = null; // Intervalo para monitorar a inatividade
 const hasGameStarted = ref(false); // Indica se o jogador já começou o jogo
 const gameStartTime = ref(null); // Stores the game's start time for database submission
+let gameStartTimeMs = 0; 
 
 const startInactivityTimer = () => {
   inactivityInterval = setInterval(() => {
@@ -130,13 +131,31 @@ const formatDateForMySQL = (date) => {
   const hours = String(d.getHours()).padStart(2, '0');
   const minutes = String(d.getMinutes()).padStart(2, '0');
   const seconds = String(d.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  const milliseconds = String(d.getMilliseconds()).padStart(2, '0'); // Get milliseconds and pad it to 3 digits
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`; // Include milliseconds
 };
+
+const getBoardIdBySize = (gridSize) => {
+      if (gridSize === 12) {
+        return 1;  // Example board_id for 12x12 grid
+      } else if (gridSize === 16) {
+        return 2;  // Example board_id for 16x16 grid
+      }else if (gridSize === 36){
+      return 0; 
+      } // Default fallback
+    };
 
 // Submits the game data to the database
 const handleGameCompletion = async () => {
   stopTimer();
   stopInactivityTimer();
+  const gameEndTimeMs = Date.now(); // Get the end time in milliseconds
+  const totalTimeInMilliseconds = gameEndTimeMs - gameStartTimeMs;
+  const totalTimeInSeconds = (totalTimeInMilliseconds / 1000).toFixed(2);
+
+  const boardId = getBoardIdBySize(props.gridSize);
+  
+ 
 
   const gameData = {
     winner_user_id: null, // Single-player game
@@ -144,11 +163,14 @@ const handleGameCompletion = async () => {
     status: 'E',
     began_at: formatDateForMySQL(gameStartTime.value), // Correct format
     ended_at: formatDateForMySQL(new Date()), // Correct format
-    total_time: timer.value,
-    board_id: 1,
+    total_time: totalTimeInSeconds,
+    board_id: boardId,
     total_turns_winner: moves.value,
     custom: JSON.stringify({ mistakes: mistakes.value, gridSize: props.gridSize }), // Additional data
   };
+
+
+  
 
   await gameStore.submitGame(gameData);
 
@@ -222,6 +244,9 @@ const handleCardFlip = (index) => {
 
   if (!gameStartTime.value && hasGameStarted.value) {
     gameStartTime.value = new Date().toISOString();
+    gameStartTimeMs = Date.now();
+  
+
   }
 
   const card = cards[index];

@@ -47,22 +47,52 @@ class PersonalScoreController extends Controller
                       ->where('board_rows', $rows)
                       ->first();
 
-        // Retrieve games associated with this board
-        $games = Game::where('board_id', $board->id)->get();
+        if (!$board) {
+            return [
+                'singleplayer' => [
+                    'shortestTime' => '-',
+                    'fewestMoves' => '-',
+                    'totalGames' => 0,
+                ],
+                'multiplayer' => [
+                    'shortestTime' => '-',
+                    'fewestMoves' => '-',
+                    'totalWins' => 0,
+                    'totalLosses' => 0,
+                    'totalGames' => 0,
+                ],
+            ];
+        }
 
-        // Calculate the required statistics
-        $shortestTime = $games->min('total_time');
-        $fewestMoves = $games->min('total_turns');
-        $totalWins = $games->where('winner_user_id', Auth::id())->count();
-        $totalLosses = $games->where('winner_user_id', '!=', Auth::id())->count();
-        $fewestMovesInGame = $games->min('total_turns');
+        // Retrieve games associated with this board for the authenticated user
+        $games = Game::where('board_id', $board->id)
+            ->where('created_user_id', Auth::id())
+            ->where('status', 'E') // Ensure game is ended
+            ->get();
 
-        return [
-            'shortestTime' => $shortestTime,
-            'fewestMoves' => $fewestMoves,
+        // Singleplayer games (Type 'S')
+        $singleplayerGames = $games->where('type', 'S');
+        $singleplayerStats = [
+            'shortestTime' => $singleplayerGames->isEmpty() ? '-' : $singleplayerGames->min('total_time'),
+            'fewestMoves' => $singleplayerGames->isEmpty() ? '-' : $singleplayerGames->min('total_turns_winner'),
+            'totalGames' => $singleplayerGames->count(),
+        ];
+
+        // Multiplayer games (Type 'M')
+        $multiplayerGames = $games->where('type', 'M');
+        $totalWins = $multiplayerGames->where('winner_user_id', Auth::id())->count();
+        $totalLosses = $multiplayerGames->count() - $totalWins;
+        $multiplayerStats = [
+            'shortestTime' => $multiplayerGames->isEmpty() ? '-' : $multiplayerGames->min('total_time'),
+            'fewestMoves' => $multiplayerGames->isEmpty() ? '-' : $multiplayerGames->min('total_turns_winner'),
             'totalWins' => $totalWins,
             'totalLosses' => $totalLosses,
-            'fewestMovesInGame' => $fewestMovesInGame,
+            'totalGames' => $multiplayerGames->count(),
+        ];
+
+        return [
+            'singleplayer' => $singleplayerStats,
+            'multiplayer' => $multiplayerStats,
         ];
     }
 }

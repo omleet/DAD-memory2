@@ -14,7 +14,6 @@ export const usePersonalScoreStore = defineStore('personalScore', () => {
       const response = await axios.get('/personal-score'); // Endpoint to fetch the scores
       const scores = response.data;
 
-      // Populate the store with the scores for each board size
       board3x4.value = scores['3x4'];
       board4x4.value = scores['4x4'];
       board6x6.value = scores['6x6'];
@@ -23,10 +22,21 @@ export const usePersonalScoreStore = defineStore('personalScore', () => {
     }
   };
 
+  // Helper function to format time in seconds as m:ss
+  const formatTime = (seconds) => {
+    if (seconds === '-' || isNaN(seconds) || !seconds || seconds <= 0) return '-';
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = (seconds % 60).toFixed(2);  // Round the remaining seconds to 2 decimal places
+    
+    return `${minutes}m ${remainingSeconds}s`;
+  };
+
   return {
     board3x4,
     board4x4,
     board6x6,
     fetchBoardScores,
+    formatTime, // Expose formatTime to the component
   };
 });

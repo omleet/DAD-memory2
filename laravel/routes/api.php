@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/statistics/admin', [StatisticsController::class, 'adminStatistics']); //admin statistics
     Route::post('/game/store', [GameController::class, 'storeGame']);
     Route::get('/personal-score', [PersonalScoreController::class, 'getScoreboard']);
+
 });
 Route::post('/auth/login', [AuthController::class, "login"]);
 
