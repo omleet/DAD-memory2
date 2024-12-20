@@ -22,7 +22,6 @@ import GameHistory from '@/components/GameHistory/GameHistory.vue'
 import AdminTab from '@/components/Admin/AdminTab.vue'
 import CreateAccountAdmin from '@/components/Admin/CreateAccountAdmin.vue'
 import UserLists from '@/components/Admin/UserLists.vue'
-import PrivateLeaderBoard from '@/components/Boards/PrivateLeaderBoard.vue'
 import GeneralStatistics from '@/components/Statistics/GeneralStatistics.vue'
 import MyStatistics from '@/components/Statistics/MyStatistics.vue'
 import AdminStatistics from '@/components/Statistics/AdminStatistics.vue'
@@ -144,11 +143,7 @@ const router = createRouter({
       name: 'userlists',
       component: UserLists,
     },
-    {
-      path: '/privateleaderboard',
-      name: 'privateleaderboard',
-      component: PrivateLeaderBoard,
-    },
+    
     {
       path: '/generalstatistics',
       name: 'generalstatistics',
@@ -166,7 +161,7 @@ const router = createRouter({
     },
     {
       path: '/personal-score',
-      name: '/personal-score',
+      name: 'personal-score',
       component: PrivateScoreBoard,
     },
    
@@ -178,13 +173,14 @@ let handlingFirstRoute = true
 
 router.beforeEach(async (to, from, next) => {
   const storeAuth = useAuthStore()
+  
   if (handlingFirstRoute) {
       handlingFirstRoute = false
       await storeAuth.restoreToken()
   }
 
   if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "mystatistics" | to.name == "purchasebraincoins"
-    | to.name == "transactions" | to.name == "gamehistory") && (!storeAuth.user)) {
+    | to.name == "transactions" | to.name == "gamehistory" | to.name=="personal-score") && (!storeAuth.user)) {
     next({ name: 'loginform' })
     return
   }
@@ -198,9 +194,17 @@ router.beforeEach(async (to, from, next) => {
     next({ name: 'home' })
     return
   }
-
-
+  
+  if (['cardgame4x4', 'cardgame6x6'].includes(to.name)) {
+    const userBalance = storeAuth.user?.brain_coins_balance|| 0; 
+    if (userBalance < 1) {
+      
+      next({ name: 'singleplayer' })
+      return ; 
+    }
+  }
   next()
+  
 })
 
 
