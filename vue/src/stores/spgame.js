@@ -9,16 +9,19 @@ export const useSpGameStore = defineStore('spgame', () => {
   const showAlert = ref(false);
   const targetRoute = ref('');
 
+  
+
   const handleGameModeClick = (route, isAuthenticated, userBalance) => {
     if (!isAuthenticated) {
+      
       // User is not authenticated
       alertMessage.value = 'Alert! Please log in/Register to proceed.';
       showAlert.value = true;
       setTimeout(() => (showAlert.value = false), 4000);
       return false;
     }
-
     targetRoute.value = route;
+    
 
     if (userBalance < 1) {
       showNotEnoughCoinsModal.value = true;

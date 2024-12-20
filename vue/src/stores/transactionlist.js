@@ -34,6 +34,15 @@ export const useTransactionListStore = defineStore('transactionList', () => {
     return new Date(datetime).toLocaleDateString(undefined, options);
   };
 
+  const getTransactionTypeText = (type) => {
+    const typeMap = {
+      P: 'Purchase',
+      I: 'Internal Spending',
+      B: 'Bonus',
+    };
+    return typeMap[type] || 'Unknown';
+  };
+
   return {
     transactions,
     loading,
@@ -41,5 +50,6 @@ export const useTransactionListStore = defineStore('transactionList', () => {
     currentPage,
     fetchTransactions,
     formatDate,
+    getTransactionTypeText,
   };
 });

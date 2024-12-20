@@ -43,13 +43,47 @@
           <p><strong>❌ Mistakes:</strong> {{ mistakes }}</p>
           <p><strong>🎯 Pairs Found:</strong> {{ gridSize / 2 }}</p>
         </div>
-        <button @click="resetGame"
+        <button @click="handlePlayAgain"
           class="bg-blue-500 text-white text-lg py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors">
           🔄 Play Again
         </button>
       </div>
     </div>
 
+    <!-- Coin Deduction Modal -->
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+        <p class="text-lg mb-4">This game costs 1 BrainCoin. Do you want to continue?</p>
+        <div class="flex justify-between">
+          <button @click="cancelPlayAgain" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Cancel
+          </button>
+          <button @click="confirmPlayAgain"
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Use 1 BrainCoin
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Not Enough Coins Modal -->
+    <div v-if="showNotEnoughCoinsModal"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+        <p class="text-lg mb-4">You don't have enough BrainCoins to start this game. Do you want to buy more?</p>
+        <div class="flex justify-between">
+          <button @click="cancelPlayAgain" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Cancel
+          </button>
+          <button @click="router.push('/purchasebraincoins')"
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Buy BrainCoins
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inactivity Warning Popup -->
     <div v-if="isInactivityPopupVisible"
       class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
       <div class="bg-white rounded-xl p-6 text-center shadow-xl max-w-lg w-full">
@@ -63,17 +97,26 @@
         </button>
       </div>
     </div>
+
   </div>
 </template>
+
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import Card from './Card.vue';
 import { useRouter } from 'vue-router';
 import { useGameStore } from '@/stores/gameStore';
+import { useAuthStore } from '@/stores/auth';
+import { useSpGameStore } from '/src/stores/spgame.js';
 
 const router = useRouter();
 const gameStore = useGameStore();
+const authStore = useAuthStore();
+const spGameStore = useSpGameStore();
+
+const showModal = ref(false);
+const showNotEnoughCoinsModal = ref(false);
 
 const inactivityTimer = ref(0); // Tempo atual de inatividade
 const maxInactivityTime = 21; // Tempo total para encerrar o jogo
@@ -82,7 +125,29 @@ const isInactivityPopupVisible = ref(false); // Controle de visibilidade do avis
 let inactivityInterval = null; // Intervalo para monitorar a inatividade
 const hasGameStarted = ref(false); // Indica se o jogador já começou o jogo
 const gameStartTime = ref(null); // Stores the game's start time for database submission
-let gameStartTimeMs = 0; 
+let gameStartTimeMs = 0;
+
+
+const handlePlayAgain = () => {
+  const userBalance = authStore.balance;
+  if (userBalance < 1) {
+    showNotEnoughCoinsModal.value = true;
+  } else {
+    showModal.value = true;
+  }
+};
+
+
+const confirmPlayAgain = async () => {
+  const newBalance = await spGameStore.useBrainCoin();
+  if (newBalance !== null) {
+    authStore.updateBalance(newBalance);
+    resetGame();
+    showModal.value = false;
+  }
+};
+
+
 
 const startInactivityTimer = () => {
   inactivityInterval = setInterval(() => {
@@ -136,14 +201,14 @@ const formatDateForMySQL = (date) => {
 };
 
 const getBoardIdBySize = (gridSize) => {
-      if (gridSize === 12) {
-        return 1;  // Example board_id for 12x12 grid
-      } else if (gridSize === 16) {
-        return 2;  // Example board_id for 16x16 grid
-      }else if (gridSize === 36){
-      return 0; 
-      } // Default fallback
-    };
+  if (gridSize === 12) {
+    return 1;  // Example board_id for 12x12 grid
+  } else if (gridSize === 16) {
+    return 2;  // Example board_id for 16x16 grid
+  } else if (gridSize === 36) {
+    return 3;
+  } // Default fallback
+};
 
 // Submits the game data to the database
 const handleGameCompletion = async () => {
@@ -154,8 +219,8 @@ const handleGameCompletion = async () => {
   const totalTimeInSeconds = (totalTimeInMilliseconds / 1000).toFixed(2);
 
   const boardId = getBoardIdBySize(props.gridSize);
-  
- 
+
+
 
   const gameData = {
     winner_user_id: null, // Single-player game
@@ -170,7 +235,7 @@ const handleGameCompletion = async () => {
   };
 
 
-  
+
 
   await gameStore.submitGame(gameData);
 
@@ -184,7 +249,7 @@ const handleGameCompletion = async () => {
 const props = defineProps({
   gridSize: {
     type: Number,
-    default:12, // Tamanho padrão da grade (4x3)
+    default: 12, // Tamanho padrão  (4x3)
   },
 });
 
@@ -245,7 +310,7 @@ const handleCardFlip = (index) => {
   if (!gameStartTime.value && hasGameStarted.value) {
     gameStartTime.value = new Date().toISOString();
     gameStartTimeMs = Date.now();
-  
+
 
   }
 
@@ -328,4 +393,3 @@ onUnmounted(() => {
   stopInactivityTimer();
 });
 </script>
-
