@@ -22,55 +22,56 @@
       </div>
 
       <!-- Games Table -->
-      <div v-else>
-        <table v-if="gameHistoryStore.games.data?.length > 0"
-          class="game-history-table w-full table-auto text-gray-700 mb-8">
-          <thead>
-            <tr class="text-left text-sm font-semibold text-gray-800 border-b">
-              <th class="px-4 py-2">Date</th>
-              <th class="px-4 py-2">Game Type</th>
-              <th class="px-4 py-2">Status</th>
-              <th class="px-4 py-2">Total Time</th>
-              <th class="px-4 py-2">Turns</th>
-              <th class="px-4 py-2">Winner</th>
-              <th class="px-4 py-2">Board Size</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="game in gameHistoryStore.games.data" :key="game.id" class="border-b hover:bg-gray-50">
-              <td class="px-4 py-2">{{ gameHistoryStore.formatDate(game.began_at) }}</td>
-              <td class="px-4 py-2">{{ game.type === 'S' ? 'Single Player' : 'Multiplayer' }}</td>
-              <td class="px-4 py-2">{{ gameHistoryStore.getStatusText(game.status) }}</td>
-              <td class="px-4 py-2">{{ gameHistoryStore.formatTotalTime(game.total_time) }}</td>
-              <td class="px-4 py-2">{{ game.total_turns_winner ? game.total_turns_winner : '-' }}</td>
-              <td class="px-4 py-2">{{ game.winner_nickname || '-' }}</td> <!-- Winner Nickname -->
-              <td class="px-4 py-2">{{ game.board_size || '-' }}</td> <!-- Board Size -->
-            </tr>
-          </tbody>
-        </table>
+      <div>
+        <div class="overflow-x-auto">
+          <table v-if="gameHistoryStore.games.data?.length > 0" class="min-w-full bg-white border-collapse border border-gray-200">
+            <thead>
+              <tr class="text-left text-sm font-semibold text-gray-800 border-b bg-gray-100">
+                <th class="px-4 py-2 border-r">Date</th>
+                <th class="px-4 py-2 border-r">Game Type</th>
+                <th class="px-4 py-2 border-r">Status</th>
+                <th class="px-4 py-2 border-r">Total Time</th>
+                <th class="px-4 py-2 border-r">Turns</th>
+                <th class="px-4 py-2 border-r">Winner</th>
+                <th class="px-4 py-2">Board Size</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="game in gameHistoryStore.games.data" :key="game.id" class="border-b hover:bg-gray-50">
+                <td class="px-4 py-2 border-r">{{ gameHistoryStore.formatDate(game.began_at) }}</td>
+                <td class="px-4 py-2 border-r">{{ game.type === 'S' ? 'Single Player' : 'Multiplayer' }}</td>
+                <td class="px-4 py-2 border-r">{{ gameHistoryStore.getStatusText(game.status) }}</td>
+                <td class="px-4 py-2 border-r">{{ gameHistoryStore.formatTotalTime(game.total_time) }}</td>
+                <td class="px-4 py-2 border-r">{{ game.total_turns_winner ? game.total_turns_winner : '-' }}</td>
+                <td class="px-4 py-2 border-r">{{ game.winner_nickname || '-' }}</td>
+                <td class="px-4 py-2">{{ game.board_size || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
 
-        <!-- No Games Found -->
-        <div v-else class="text-center text-gray-600">
-          <p>No game history found.</p>
+          <!-- No Games Found -->
+          <div v-else class="text-center text-gray-600">
+            <p>No game history found.</p>
+          </div>
         </div>
+      </div>
 
-        <!-- Pagination Controls -->
-        <div v-if="gameHistoryStore.games.total > gameHistoryStore.games.per_page"
-          class="flex justify-between items-center mt-4">
-          <button @click="changePage(gameHistoryStore.currentPage - 1)"
-            :disabled="gameHistoryStore.currentPage === 1 || gameHistoryStore.loading"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
-            Previous
-          </button>
+      <!-- Pagination Controls -->
+      <div v-if="gameHistoryStore.games.total > gameHistoryStore.games.per_page"
+        class="flex justify-between items-center mt-4">
+        <button @click="changePage(gameHistoryStore.currentPage - 1)"
+          :disabled="gameHistoryStore.currentPage === 1 || gameHistoryStore.loading"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+          Previous
+        </button>
 
-          <span v-if="gameHistoryStore.loading" class="ml-4 text-gray-600">Loading...</span>
+        <span v-if="gameHistoryStore.loading" class="ml-4 text-gray-600">Loading...</span>
 
-          <button @click="changePage(gameHistoryStore.currentPage + 1)"
-            :disabled="gameHistoryStore.currentPage === gameHistoryStore.games.last_page || gameHistoryStore.loading"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
-            Next
-          </button>
-        </div>
+        <button @click="changePage(gameHistoryStore.currentPage + 1)"
+          :disabled="gameHistoryStore.currentPage === gameHistoryStore.games.last_page || gameHistoryStore.loading"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+          Next
+        </button>
       </div>
     </div>
   </div>
@@ -94,22 +95,5 @@ const changePage = (page) => {
 </script>
 
 <style scoped>
-.game-history-table {
-  border-collapse: collapse;
-}
-
-.game-history-table th,
-.game-history-table td {
-  padding: 12px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-.game-history-table th {
-  background-color: #f4f4f4;
-}
-
-.game-history-table td {
-  background-color: #ffffff;
-}
+/* Additional styles for table columns and rows */
 </style>
