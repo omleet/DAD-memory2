@@ -402,7 +402,7 @@ const handleGameModeClick = async (route, event) => {
 </script>
 
 <style scoped>
-@media (max-width: 1504px) and (max-height: 956px) {
+@media (max-width: 1604px) and (max-height: 953px) {
   .hamburger-menu {
     display: block !important;
   }
@@ -412,7 +412,7 @@ const handleGameModeClick = async (route, event) => {
   }
 }
 
-@media (min-width: 1505px) {
+@media (min-width: 1605px) {
   .hamburger-menu {
     display: none !important;
   }
