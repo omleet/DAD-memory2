@@ -157,7 +157,7 @@ const router = createRouter({
     },
     {
       path: '/adminstatistics',
-      name: 'adminstatisticss',
+      name: 'adminstatistics',
       component: AdminStatistics,
     },
     {

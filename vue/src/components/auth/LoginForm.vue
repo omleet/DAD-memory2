@@ -75,7 +75,7 @@ const login = () => {
         <div class="mt-4 text-sm text-gray-600 text-center">
           <p>
             Don't have an account yet? 
-            <router-link to="/register" class="text-blue-500 hover:text-blue-700">Register here</router-link>
+            <router-link :to="{ name: 'register' }" class="text-blue-500 hover:text-blue-700">Register here</router-link>
           </p>
         
         </div>

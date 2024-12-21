@@ -52,7 +52,7 @@ const alertMessage = ref('');
 
         <!-- Botão de Edição -->
         <div class="flex justify-center mt-6">
-          <RouterLink to="/profileedit">
+          <RouterLink  :to="{ name: 'profileedit' }">
             <button
               class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2"
             >
@@ -75,7 +75,7 @@ const alertMessage = ref('');
           </RouterLink>
         </div>
         <div v-show="storeAuth.canUserDeleteOwnAccount()" class="flex justify-center mt-6">
-          <RouterLink to="/accountdelete">
+          <RouterLink :to="{ name: 'accountdelete' }">
             <button
               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2"
             >

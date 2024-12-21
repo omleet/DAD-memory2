@@ -6,7 +6,7 @@
       <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex items-center justify-between h-24 w-full">
           <!-- Logo com link para Home -->
-          <RouterLink to="/" class="flex-shrink-0 mr-20">
+          <RouterLink :to="{ name: 'home' }" class="flex-shrink-0 mr-20">
             <img src="/logo1.png" alt="Logo"
               class="w-16 h-auto object-contain transition-transform duration-200 ease-in-out transform hover:scale-[1.30]" />
           </RouterLink>
@@ -19,7 +19,7 @@
             <span class="material-icons text-2xl">menu</span>
           </button>
           <div class="esconder-menu flex items-center space-x-5 hidden sm:flex">
-            <RouterLink to="/"
+            <RouterLink :to="{ name: 'home' }"
               class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
               active-class="text-blue-600 font-semibold border-blue-600">
               Home
@@ -39,16 +39,16 @@
                 class="absolute left-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 mt-0 group-hover:block">
                 <ul class="py-2 text-sm text-gray-700">
                   <li>
-                    <RouterLink to="/singleplayer"
+                    <RouterLink :to="{ name: 'singleplayer' }"
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 
                       Singleplayer
                     </RouterLink>
                   </li>
                   <li>
-                    <RouterLink class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <RouterLink to="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 
-                      <button @click="handleGameModeClick('/multiplayer', $event)">Multiplayer</button>
+                      <button @click="handleGameModeClick('multiplayer', $event)">Multiplayer</button>
                     </RouterLink>
                   </li>
                 </ul>
@@ -56,23 +56,23 @@
             </div>
 
             <!-- Outros links -->
-            <RouterLink to="/websocket"
+            <RouterLink :to="{ name: 'websocket' }"
               class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
               active-class="text-blue-600 font-semibold border-blue-600">
               WebSockets
             </RouterLink>
 
-            <RouterLink to="/leaderboardsall"
+            <RouterLink :to="{ name: 'leaderboardsall' }"
               class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
               active-class="text-blue-600 font-semibold border-blue-600">
               Leaderboards
             </RouterLink>
-            <RouterLink v-if="storeAuth.user" to="/gamehistory"
+            <RouterLink v-if="storeAuth.user" :to="{ name: 'gamehistory' }" 
               class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
               active-class="text-blue-600 font-semibold border-blue-600">
               Game History
             </RouterLink>
-            <RouterLink v-if="storeAuth.user" to="/transactions"
+            <RouterLink v-if="storeAuth.user" :to="{ name: 'transactions' }" 
               class="text-gray-900 hover:text-blue-600 hover:bg-gray-300 px-3 py-2 rounded-full border border-gray-500 text-lg font-medium transition-colors"
               active-class="text-blue-600 font-semibold border-blue-600">
               Transactions
@@ -91,20 +91,20 @@
                 class="absolute left-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 mt-0 group-hover:block">
                 <ul class="py-2 text-sm text-gray-700">
                   <li>
-                    <RouterLink to="/generalstatistics"
+                    <RouterLink :to="{ name: 'generalstatistics' }" 
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       General Statistics
                     </RouterLink>
                   </li>
                   <li v-if="storeAuth.user">
-                    <RouterLink to="/mystatistics"
+                    <RouterLink :to="{ name: 'mystatistics' }" 
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 
                       My Statistics
                     </RouterLink>
                   </li>
                   <li v-if="storeAuth.isAdministrator()">
-                    <RouterLink to="/adminstatistics"
+                    <RouterLink :to="{ name: 'adminstatistics' }" 
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 
                       Admin Statistics
@@ -114,14 +114,14 @@
               </div>
             </div>
 
-            <RouterLink v-if="storeAuth.user" to="/purchasebraincoins"
+            <RouterLink v-if="storeAuth.user" :to="{ name: 'purchasebraincoins' }"  
               class="pulse-green text-white border border-green-600 px-6 py-2 rounded-full text-lg font-medium transition-colors">
               Get BrainCoins
             </RouterLink>
 
 
 
-            <RouterLink v-if="storeAuth.isAdministrator()" to="admintab"
+            <RouterLink v-if="storeAuth.isAdministrator()" :to="{ name: 'admintab' }" 
               class="animated-bg text-white border border-transparent px-6 py-2 rounded-full text-lg font-medium transition-colors">
               Admin
             </RouterLink>
@@ -146,7 +146,7 @@
 
               <!-- Imagem do perfil com hover para o menu -->
               <div class="relative group">
-                <RouterLink to="#" @click="toggleDropdown" @mouseenter="openDropdown" @mouseleave="closeDropdown">
+                <RouterLink :to="{ name: 'profile' }"  @click="toggleDropdown" @mouseenter="openDropdown" @mouseleave="closeDropdown">
                   <img class="w-14 h-14 rounded-full" :src="storeAuth.userPhotoUrl || avatarNoneAssetURL"
                     alt="Profile picture" />
                 </RouterLink>
@@ -157,19 +157,19 @@
                   @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false">
                   <ul class="py-2 text-sm text-gray-700">
                     <li>
-                      <RouterLink to="/profile"
+                      <RouterLink :to="{ name: 'profile' }"
                         class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Profile
                       </RouterLink>
                     </li>
                     <li>
-                      <RouterLink to="/personal-score"
+                      <RouterLink :to="{ name: 'personal-score' }"
                         class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Personal Scores
                       </RouterLink>
                     </li>
                     <li>
-                      <RouterLink to="/backgroundselector"
+                      <RouterLink :to="{ name: 'backgroundselector' }"
                         class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Background Selector
                       </RouterLink>
@@ -186,7 +186,7 @@
             </div>
 
             <!-- Quando não logado -->
-            <RouterLink v-else to="/loginform"
+            <RouterLink v-else :to="{ name: 'loginform' }"
               class="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-blue-600 active:bg-blue-700 mr-35"
               active-class="bg-blue-700">
               Login/Register
@@ -208,7 +208,7 @@
             </button>
 
             <!-- Replicate main menu links inside the sidebar -->
-            <RouterLink to="/"
+            <RouterLink :to="{ name: 'home' }"
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               Home</RouterLink>
 
@@ -225,13 +225,13 @@
               </button>
               <ul v-show="isDropdownVisibleee" class="py-2 space-y-2">
                 <li>
-                  <RouterLink to="/singleplayer"
+                  <RouterLink :to="{ name: 'singleplayer' }"
                     class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
                     Singleplayer</RouterLink>
                 </li>
                 <li>
-                  <RouterLink to="/multiplayer" class="block">
-                    <button @click="handleGameModeClick('/multiplayer', $event)"
+                  <RouterLink :to="{ name: 'multiplayer' }">
+                    <button @click="handleGameModeClick('multiplayer', $event)"
                       class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
                       Multiplayer
                     </button>
@@ -241,19 +241,19 @@
             </div>
 
             <!-- Other links -->
-            <RouterLink to="/websocket"
+            <RouterLink :to="{ name: 'websocket' }"
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               WebSockets</RouterLink>
-            <RouterLink to="/leaderboardsall"
+            <RouterLink :to="{ name: 'leaderboardsall' }"
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               Leaderboards</RouterLink>
 
             <!-- Links for authenticated users -->
-            <RouterLink v-if="storeAuth.user" to="/gamehistory"
+            <RouterLink v-if="storeAuth.user" :to="{ name: 'gamehistory' }" 
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               Game
               History</RouterLink>
-            <RouterLink v-if="storeAuth.user" to="/transactions"
+            <RouterLink v-if="storeAuth.user" :to="{ name: 'transactions' }" 
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               Transactions</RouterLink>
 
@@ -270,17 +270,17 @@
               </button>
               <ul v-show="isDropdownVisiblee" class="py-2 space-y-2">
                 <li>
-                  <RouterLink to="/generalstatistics"
+                  <RouterLink :to="{ name: 'generalstatistics' }" 
                     class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
                     General Statistics</RouterLink>
                 </li>
                 <li v-if="storeAuth.user">
-                  <RouterLink to="/mystatistics"
+                  <RouterLink :to="{ name: 'mystatistics' }" 
                     class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
                     My Statistics</RouterLink>
                 </li>
                 <li v-if="storeAuth.isAdministrator()">
-                  <RouterLink to="/adminstatistics"
+                  <RouterLink :to="{ name: 'adminstatistics' }" 
                     class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
                     Admin Statistics</RouterLink>
                 </li>
@@ -288,12 +288,12 @@
             </div>
 
             <!-- User-specific links -->
-            <RouterLink v-if="storeAuth.user" to="/purchasebraincoins"
+            <RouterLink v-if="storeAuth.user" :to="{ name: 'purchasebraincoins' }" 
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               Get BrainCoins</RouterLink>
 
             <!-- Admin links -->
-            <RouterLink v-if="storeAuth.isAdministrator()" to="admintab"
+            <RouterLink v-if="storeAuth.isAdministrator()" :to="{ name: 'admintab' }" 
               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white">
               Admin</RouterLink>
           </div>
@@ -393,7 +393,7 @@ const handleGameModeClick = async (route, event) => {
   // Verifica se o utilizador está autenticado
   if (storeAuth.user) {
     // Se o utilizador estiver autenticado, navega para a página Multiplayer
-    await router.push(route);
+    await router.push({ name: route });
   } else {
     // Caso contrário, exibe um alerta e não permite navegação
     showAlert.value = true;

@@ -75,7 +75,7 @@
           <button @click="cancelPlayAgain" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
             Cancel
           </button>
-          <button @click="router.push('/purchasebraincoins')"
+          <button @click="router.push({ name: 'purchasebraincoins'});"
             class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
             Buy BrainCoins
           </button>
@@ -149,7 +149,8 @@ const confirmPlayAgain = async () => {
 };
 
 const cancelPlayAgain = async () => {
-router.push('/singleplayer');
+router.push({ name: 'singleplayer'}); 
+
 };
 
 

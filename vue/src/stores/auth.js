@@ -230,7 +230,7 @@ export const useAuthStore = defineStore('auth', () => {
       repeatRefreshToken();
 
       // Redirecionar para a página de perfil
-      router.push('/profile');
+      router.push({ name: 'profile'});;
 
       return user.value;
 
@@ -252,7 +252,7 @@ export const useAuthStore = defineStore('auth', () => {
     storeError.resetMessages()
     try {
       await axios.post('auth/logout')
-      router.push('/')
+      router.push({ name: 'home'});
       clearUser()
       return true
     } catch (e) {
@@ -299,7 +299,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.log(response.data);
       await getDataAfterTheUpdate();
 
-      router.push('/profile');
+      router.push({ name: 'profile'});
 
       toast({
         description: 'Account info has been updated successfully!',
@@ -422,7 +422,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Redireciona para a página de login se o tipo for "P"
       if (type === 'P') {
-        router.push('/loginform');
+        router.push({ name: 'loginform'});
       }
 
       // Exibe a mensagem de sucesso

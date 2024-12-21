@@ -21,7 +21,7 @@
           </p>
           <RouterLink
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 inline-block"
-            to="/singleplayer"
+            :to="{ name: 'singleplayer' }"
           >
             Play Singleplayer
           </RouterLink>
@@ -45,7 +45,7 @@
           <RouterLink
             v-else
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 inline-block mt-4"
-            to="/multiplayer"
+            :to="{ name: 'multiplayer' }"
           >
             Play Multiplayer
           </RouterLink>
@@ -59,7 +59,7 @@
           <p class="text-gray-600 mb-6">See who's at the top of the charts and challenge your friends!</p>
           <RouterLink
             class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2 inline-block"
-            to="/leaderboardsall"
+            :to="{ name: 'leaderboardsall' }" 
           >
             View Leaderboards
           </RouterLink>
@@ -73,7 +73,7 @@
           <p class="text-gray-600 mb-6">Analyze the general gameplay data!</p>
           <RouterLink
             class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-            to="/generalstatistics"
+            :to="{ name: 'generalstatistics' }" 
           >
             View General Statistics
           </RouterLink>
