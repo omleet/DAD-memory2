@@ -7,7 +7,7 @@ import { ref } from 'vue';
 const storeAuth = useAuthStore();
 const showAlert = ref(false);
 const alertMessage = ref('');
-
+ 
 
 </script>
 
@@ -20,6 +20,7 @@ const alertMessage = ref('');
         <!-- Imagem do Perfil -->
         <div class="flex justify-center mb-6">
           <img :src="storeAuth.userPhotoUrl" alt="User Avatar" class="w-20 h-20 rounded-full" />
+          
         </div>
 
         <!-- Detalhes do Perfil -->
