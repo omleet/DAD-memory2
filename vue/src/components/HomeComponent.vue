@@ -7,7 +7,7 @@
       <!-- Mensagem de boas-vindas -->
       <div class="text-center mb-8">
         <p class="text-lg text-gray-700 font-medium">
-          Welcome to the Memory Game! Test your memory skills and challenge yourself to beat your best score. Ready to play?
+          NOT Welcome to the Memory Game! Test your memory skills and challenge yourself to beat your best score. Ready to play?
         </p>
       </div>
 

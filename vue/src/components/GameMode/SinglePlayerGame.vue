@@ -24,11 +24,11 @@
               to="/cardgame">
               Game 4x3
             </RouterLink>
-            <button @click="handleGameModeClick('/cardgame4x4')"
+            <button @click="handleGameModeClick('cardgame4x4')"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">
               Game 4x4
             </button>
-            <button @click="handleGameModeClick('/cardgame6x6')"
+            <button @click="handleGameModeClick('cardgame6x6')"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">
               Game 6x6
             </button>
@@ -107,9 +107,10 @@ const confirmUseBrainCoin = async () => {
   const newBalance = await spGameStore.useBrainCoin();
   if (newBalance !== null) {
     authStore.updateBalance(newBalance);
-    const targetRoute = spGameStore.targetRoute || '/singleplayer'; // Use fallback if targetRoute is undefined
-    router.push(targetRoute);
-    router.push(spGameStore.targetRoute);
+    const targetRoute = spGameStore.targetRoute || 'singleplayer'; // Use fallback if targetRoute is undefined
+    router.push({name:targetRoute});
+    console.log(targetRoute);
+    router.push({name:spGameStore.targetRoute});
     spGameStore.showModal = false;
   }
 };

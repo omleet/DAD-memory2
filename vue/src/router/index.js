@@ -196,6 +196,11 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
+  if ((to.name == "singleplayer" |to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "cardgame") && (storeAuth.isAdministrator())) {
+    next({ name: 'home' })
+    return
+  }
+
   if ((to.name == "admintab" | to.name == "createaccountadmin" | to.name == "userlists" | to.name == "adminstatistics") && (!storeAuth.isAdministrator())) {
     next({ name: 'home' })
     return
