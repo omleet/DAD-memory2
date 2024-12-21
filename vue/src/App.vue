@@ -168,6 +168,12 @@
                         Personal Scores
                       </RouterLink>
                     </li>
+                    <li>
+                      <RouterLink to="/backgroundselector"
+                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Background Selector
+                      </RouterLink>
+                    </li>
                   </ul>
                   <div class="py-2">
                     <button @click="logout"
@@ -352,7 +358,7 @@ const storeAuth = useAuthStore();
 const showAlert = ref(false);
 const isDropdownOpen = ref(false);
 const alertMessage = ref('');
-
+storeAuth.initializeStore();
 
 
 

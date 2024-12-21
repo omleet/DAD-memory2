@@ -82,6 +82,7 @@
         </div>
       </div>
     </div>
+  
 
     <!-- Inactivity Warning Popup -->
     <div v-if="isInactivityPopupVisible"
