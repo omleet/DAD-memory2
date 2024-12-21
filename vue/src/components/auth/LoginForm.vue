@@ -7,20 +7,24 @@ import { useErrorStore } from '@/stores/error';
 const authStore = useAuthStore();
 const errorStore = useErrorStore();
 
-
 // Estado local
 const credentials = ref({
     email: '',
     password: ''
 })
 
-
 // Função de login
 const login = () => {
-    authStore.login(credentials.value)
+    authStore.login(credentials.value).catch((error) => {
+        // Use setErrorMessages to set the error
+        errorStore.setErrorMessages(
+            error.message || 'An error occurred',
+            {},
+            error.status || 500
+        );
+    });
 }
 </script>
-
 
 <template>
   <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
@@ -69,7 +73,7 @@ const login = () => {
         </div>
 
         <!-- Mensagem de erro geral -->
-        <p v-if="errorMessage" class="text-red-500 mt-4">{{ errorMessage }}</p>
+        <p v-if="errorStore.message" class="text-red-500 mt-4">{{ errorStore.message }}</p>
 
         <!-- Links para registro e recuperação de senha -->
         <div class="mt-4 text-sm text-gray-600 text-center">
@@ -77,11 +81,8 @@ const login = () => {
             Don't have an account yet? 
             <router-link to="/register" class="text-blue-500 hover:text-blue-700">Register here</router-link>
           </p>
-        
         </div>
       </form>
     </div>
   </div>
 </template>
-
-
