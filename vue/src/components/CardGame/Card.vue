@@ -1,25 +1,47 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="card w-16 h-28 sm:w-20 sm:h-32 cursor-pointer relative" 
-       :class="{ 'flipped': isFlipped, 'matched': card.isMatched, 'shuffling': card.isShuffling }"
-       @click="$emit('flip')">
+  <div 
+    class="card w-16 h-28 sm:w-20 sm:h-32 cursor-pointer relative"
+    :class="{ 'flipped': isFlipped, 'matched': card.isMatched, 'shuffling': card.isShuffling }"
+    @click="$emit('flip')"
+  >
     <div class="card-inner w-full h-full transition-transform duration-300 ease-in-out transform-style-preserve-3d">
-      <div class="card-front w-full h-full absolute top-0 left-0 shadow-lg bg-cover bg-center"
-           :style="{ backgroundImage: `url(${card.isFlipped || card.isMatched ? card.image : '/carta.png'})` }">
+      <div
+        class="card-front w-full h-full absolute top-0 left-0 shadow-lg bg-cover bg-center"
+        :style="{
+          backgroundImage: `url(${
+            card.isFlipped || card.isMatched 
+              ? card.image 
+              : selectedBackgroundImage
+          })`,
+        }"
+      >
       </div>
       <div class="card-back w-full h-full absolute top-0 left-0 bg-green-600 text-white text-lg font-bold shadow-lg flex items-center justify-center transform rotate-y-180">
-        <img v-if="card.isFlipped || card.isMatched" :src="card.image" alt="card image" class="w-full h-full object-cover" />
+        <img
+          v-if="card.isFlipped || card.isMatched"
+          :src="card.image"
+          alt="card image"
+          class="w-full h-full object-cover"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from "vue";
+import { useAuthStore } from "@/stores/auth";
+
 defineProps({
   card: Object,
   isFlipped: Boolean,
 });
+
+const authStore = useAuthStore();
+const selectedBackgroundImage = computed(() => authStore.userData.selectedBackgroundImage);
 </script>
+
 
 <style scoped>
 .card {

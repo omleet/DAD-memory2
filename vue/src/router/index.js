@@ -28,6 +28,7 @@ import AdminStatistics from '@/components/Statistics/AdminStatistics.vue'
 import PrivateScoreBoard  from '@/components/Boards/PrivateScoreboard.vue'
 import UnavailablePage from '@/components/Unavailable/UnavailablePage.vue'
 import { useSpGameStore } from '@/stores/spgame';
+import BackgroundSelector from '@/components/User/BackgroundSelector.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -169,6 +170,11 @@ const router = createRouter({
       name: 'unavailablepage',
       component: UnavailablePage,
     },
+    {
+      path: '/backgroundselector',
+      name: 'backgroundselector',
+      component: BackgroundSelector,
+    },
    
     
   ]
@@ -182,7 +188,8 @@ router.beforeEach(async (to, from, next) => {
   
   if (handlingFirstRoute) {
       handlingFirstRoute = false
-      await storeAuth.restoreToken()
+      await storeAuth.restoreToken();
+      storeAuth.initializeStore();
   }
 
   if ((to.name == "profile" | to.name == "cardgame4x4" | to.name == "cardgame6x6" | to.name == "multiplayer" | to.name == "accountdelete" | to.name == "profileedit" | to.name == "mystatistics" | to.name == "purchasebraincoins"
